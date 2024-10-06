@@ -9,8 +9,8 @@ setup:
 run:
 	$(python) main.py
 
-mlflow:
-	venv/bin/mlflow ui
+# mlflow:
+#	venv/bin/mlflow ui
 
 test:
 	$(python) -m pytest
