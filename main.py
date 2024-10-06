@@ -1,7 +1,7 @@
 import logging
 import yaml
-import mlflow
-import mlflow.sklearn
+# import mlflow
+# import mlflow.sklearn
 from steps.ingest import Ingestion
 from steps.clean import Cleaner
 from steps.train import Trainer
@@ -44,7 +44,8 @@ def main():
     print("=====================================================\n")
 
 
-def train_with_mlflow():
+# Commented out as not using MLFLOW
+""" def train_with_mlflow():
 
     with open('config.yml', 'r') as file:
         config = yaml.safe_load(file)
@@ -102,8 +103,8 @@ def train_with_mlflow():
         print(f"Model: {trainer.model_name}")
         print(f"Accuracy Score: {accuracy:.4f}, ROC AUC Score: {roc_auc_score:.4f}")
         print(f"\n{class_report}")
-        print("=====================================================\n")
+        print("=====================================================\n") """
         
 if __name__ == "__main__":
-    # main()
-    train_with_mlflow()
+    main()
+    # train_with_mlflow()
