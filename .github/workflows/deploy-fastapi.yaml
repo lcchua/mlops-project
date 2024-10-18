@@ -1,8 +1,4 @@
 # This workflow will build and push a new container image to Amazon ECR:
-# 1. Create an ECR repository to store your images.
-#    For example: `aws ecr create-repository --repository-name my-ecr-repo --region us-east-2`.
-#    Replace the value of the `ECR_REPOSITORY` environment variable in the workflow below with your repository's name.
-#    Replace the value of the `AWS_REGION` environment variable in the workflow below with your repository's region.
 
 name: Build and push to Amazon ECR
 
@@ -16,8 +12,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: predict-buy-app
-  CONTAINER_NAME: predict-buy-app
+  APP_NAME: predict-buy-app
 
 jobs:
   deploy:
@@ -34,22 +29,25 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: $AWS_REGION
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      #- name: Login to Amazon ECR
+      #  id: login-ecr
+      #  uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Login to ECR
+        run: aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/sctp-sandbox
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          # IMAGE_TAG: ${{ github.sha }} -> hash value of the commit if workflow trigger is non workflow dispatch
+          # IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is non workflow dispatch
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY -a
-          echo "IMAGE_NAME=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+          docker build -t $APP_NAME:$IMAGE_TAG.${{ github.run_number }} .
+          docker tag $APP_NAME:$IMAGE_TAG public.ecr.aws/sctp-sandbox/$APP_NAME:$IMAGE_TAG.${{ github.run_number }}
+          docker push public.ecr.aws/sctp-sandbox/$APP_NAME:$IMAGE_TAG.${{ github.run_number }}
+          echo "IMAGE_NAME=$APP_NAME:$IMAGE_TAG.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Display Image Name
         run: echo "The built image name is $IMAGE_NAME"
