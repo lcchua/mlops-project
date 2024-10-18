@@ -1,4 +1,5 @@
 # This workflow will build and push a new container image to Amazon ECR:
+#  - Previous docker push step: docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
 
 name: Build and push to Amazon ECR
 
@@ -15,7 +16,7 @@ env:
   APP_NAME: predict-buy-app
 
 jobs:
-  deploy:
+  Deploy:
     name: Register Container Image
     runs-on: ubuntu-latest
     environment: dev
@@ -31,22 +32,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # ECR Private Repo
       #- name: Login to Amazon ECR
       #  id: login-ecr
       #  uses: aws-actions/amazon-ecr-login@v1
-
+      # ECR Public Repo
       - name: Login to ECR
         run: aws ecr-public get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin public.ecr.aws/sctp-sandbox
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          # IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is non workflow dispatch
+          #IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is non workflow dispatch
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} .
+          docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} -t ${{ env.APP_NAME }}:latest .
           docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
-          docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+          docker tag ${{ env.APP_NAME }}:latest public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:latest
+          docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }} --all-tags
           echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Display Image Name
