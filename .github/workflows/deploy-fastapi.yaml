@@ -29,14 +29,14 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: $AWS_REGION
+          aws-region: ${{ env.AWS_REGION }}
 
       #- name: Login to Amazon ECR
       #  id: login-ecr
       #  uses: aws-actions/amazon-ecr-login@v1
 
       - name: Login to ECR
-        run: aws ecr-public get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/sctp-sandbox
+        run: aws ecr-public get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin public.ecr.aws/sctp-sandbox
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
@@ -44,10 +44,10 @@ jobs:
           # IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is non workflow dispatch
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          docker build -t $APP_NAME:$IMAGE_TAG.${{ github.run_number }} .
-          docker tag $APP_NAME:$IMAGE_TAG public.ecr.aws/sctp-sandbox/$APP_NAME:$IMAGE_TAG.${{ github.run_number }}
-          docker push public.ecr.aws/sctp-sandbox/$APP_NAME:$IMAGE_TAG.${{ github.run_number }}
-          echo "IMAGE_NAME=$APP_NAME:$IMAGE_TAG.${{ github.run_number }}" >> $GITHUB_ENV
+          docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} .
+          docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+          docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+          echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Display Image Name
         run: echo "The built image name is $IMAGE_NAME"
