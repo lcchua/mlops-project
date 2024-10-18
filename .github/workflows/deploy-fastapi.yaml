@@ -47,7 +47,7 @@ jobs:
           docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} .
           docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
           docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
-          echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Display Image Name
-        run: echo "The built image name is $IMAGE_NAME"
+        run: echo "The built image name is ${{ steps.build-image.outputs.IMAGE_NAME }}"
