@@ -45,7 +45,7 @@ jobs:
           IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
           docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} .
-          docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+          docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
           docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
           echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_ENV
 
