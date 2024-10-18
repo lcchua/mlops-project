@@ -9,7 +9,7 @@ on:
       image_tag:
         description: "Tag for the Container image"
         required: true
-        default: "latest"
+        default: "v1.0"
 
 env:
   AWS_REGION: us-east-1
