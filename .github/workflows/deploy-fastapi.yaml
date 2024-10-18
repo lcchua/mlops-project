@@ -16,7 +16,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: preidct-buy-app
+  ECR_REPOSITORY: predict-buy-app
   CONTAINER_NAME: predict-buy-app
 
 jobs:
