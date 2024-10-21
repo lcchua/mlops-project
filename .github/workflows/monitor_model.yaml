@@ -1,0 +1,35 @@
+# Monitoring Script
+- name: Monitor model
+  run: |
+    python src/monitor_model.py
+
+# Retraining Pipeline
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Every Monday at midnight
+
+jobs:
+  retrain:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        python -m pip install - upgrade pip
+        pip install -r requirements.txt
+    - name: Retrain model
+      run: |
+        python src/train_model.py
+    - name: Save retrained model
+      uses: actions/upload-artifact@v2
+      with:
+        name: retrained-model
+        path: models/
+    - name: Deploy retrained model
+      run: |
+        python src/deploy_model.py
