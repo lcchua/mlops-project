@@ -1,11 +1,13 @@
 name: MLOps Workflow
 on:
- push:
-   branches:
-     - main
- pull_request:
-   branches:
-     - main
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  #  branches:
+  #    - main
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: "3.8"
       - name: Install dependencies
         run: |
           python -m pip install - upgrade pip
