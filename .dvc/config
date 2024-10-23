@@ -1,4 +1,0 @@
-[core]
-    remote = ml-training-data-v1
-['remote "ml-training-data-v1"']
-    url = s3://ce7-lcchua-project/training_data/v1.0/
