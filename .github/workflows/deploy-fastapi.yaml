@@ -19,11 +19,11 @@ jobs:
   Deploy:
     name: Register Container Image
     runs-on: ubuntu-latest
-    environment: dev
+    environment: development
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -33,11 +33,11 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # ECR Private Repo
-      #- name: Login to Amazon ECR
+      #- name: Login to Amazon Private ECR
       #  id: login-ecr
       #  uses: aws-actions/amazon-ecr-login@v1
       # ECR Public Repo
-      - name: Login to ECR
+      - name: Login to Amazon Public ECR
         run: aws ecr-public get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin public.ecr.aws/sctp-sandbox
 
       - name: Build, tag, and push image to Amazon ECR

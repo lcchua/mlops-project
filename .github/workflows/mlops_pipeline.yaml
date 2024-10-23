@@ -1,4 +1,5 @@
 name: MLOps Workflow Pipeline
+
 on:
   #push:
   #  branches:
@@ -7,41 +8,81 @@ on:
   #  branches:
   #    - main
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Tag for the Container image?"
+        required: true
+        default: "v1.0"
+
+env:
+  AWS_REGION: us-east-1
+  APP_NAME: predict-buy-app
 
 jobs:
-  build:
+  Build:
+    name: Build Stage of CI Workflow
     runs-on: ubuntu-latest
+    environment: development
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
-      - name: Install dependencies
-        run: |
-          python -m pip install - upgrade pip
-          pip install -r requirements.txt
-      - name: Run tests
-        run: |
-          pytest tests/
-      - name: Train model
-        run: |
-          python src/train_model.py
+          python-version: "3.12" # Specify the required Python version
+      - name: Install packages and dependencies
+        run: make setup
+      - name: Set up DVC
+        uses: iterative/setup-dvc@v1
+      - name: Pull from data source # Add run-block for DVC pull from the data source repository
+        run: dvc pull
+      - name: Create the training and testing datasets
+        run: make get_data
+      - name: Train the prediction model
+        run: make run
+      - name: Test the trained model
+        run: make test
       - name: Save model artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: trained-model
           path: models/
-  deploy:
+      - name: Clean up the ML working environment
+        run: make clean
+
+  Register:
+    name: Register Container Image
     runs-on: ubuntu-latest
-    needs: build
+    needs: Build
+    environment: development
+
     steps:
-      - name: Download model artifact
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download trained-model artifact
         uses: actions/download-artifact@v2
         with:
           name: trained-model
           path: models/
-      - name: Deploy model
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to Amazon Public ECR
+        run: aws ecr-public get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin public.ecr.aws/sctp-sandbox
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          #IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is non workflow dispatch
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }} # Define image tagging to the release versioning
         run: |
-          python src/deploy_model.py
+          docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} -t ${{ env.APP_NAME }}:latest .
+          docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+          docker tag ${{ env.APP_NAME }}:latest public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:latest
+          docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }} --all-tags
+          echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
+      - name: Display Image Name
+        run: echo "The built image name is ${{ steps.build-image.outputs.IMAGE_NAME }}"
