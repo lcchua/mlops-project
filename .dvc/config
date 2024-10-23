@@ -1,0 +1,4 @@
+[core]
+    remote = ml-datasets
+['remote "ml-datasets"']
+    url = https://ce7-lcchua-project.s3.us-east-1.amazonaws.com/training_data/v1.0/
