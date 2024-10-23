@@ -1,0 +1,4 @@
+[core]
+    remote = ml-datasets
+['remote "ml-datasets"']
+    url = s3://ce7-lcchua-project/training_data/
