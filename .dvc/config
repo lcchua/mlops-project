@@ -1,4 +1,0 @@
-[core]
-    remote = lcchua-mlops-datasets
-['remote "lcchua-mlops-datasets"']
-    url = s3://lcchua-mlops-datasets/training_data/
