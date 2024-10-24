@@ -1,4 +1,0 @@
-[core]
-    remote = mlops-datasets
-['remote "mlops-datasets"']
-    url = s3://ce7-lcchua-project/production_data/
