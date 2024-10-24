@@ -33,3 +33,7 @@ jobs:
     - name: Deploy retrained model
       run: |
         python src/deploy_model.py
+
+
+    -name: Pull from DVC
+     run: dvc pull

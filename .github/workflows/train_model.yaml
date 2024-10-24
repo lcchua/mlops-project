@@ -1,0 +1,77 @@
+name: Train ML Model
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  #  branches:
+  #    - main
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Tag for the Container image?"
+        required: true
+        default: "v1.0"
+
+env:
+  AWS_REGION: us-east-1
+  APP_NAME: predict-buy-app
+
+jobs:
+  Train:
+    name: Train ML Model first-time
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12" # Specify the required Python version
+
+      - name: Install packages and dependencies
+        run: make setup
+
+      - name: Create the training and testing datasets
+        run: make get_data
+
+      - name: Train the prediction model
+        run: make run
+
+      - name: Test the trained model
+        run: make test
+
+      - name: Save model artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: trained-model
+          path: models/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Initialize DVC and Store trained-model/dataset
+        run: |
+          dvc init
+          git commit -m 'Initialize DVC'
+          dvc add data/train.csv
+          git add data/train.csv.dvc
+          git commit -m "add 1st training data"
+          dvc add models/modekl.pkl
+          git add models/model.pkl.dvc
+          git commit -m "add 1st trained model"
+          dvc remote add -d remote s3://ce7-lcchua-project/ml_artefacts/
+          dvc remote modify remote credentialpath ~/.aws/credentials
+          dvc push
+          git push origin master
+
+      - name: Clean up the training environment
+        run: make clean

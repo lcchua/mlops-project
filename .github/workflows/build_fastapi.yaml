@@ -1,0 +1,69 @@
+# This workflow will build and push a new container image to Amazon ECR:
+#  - Previous docker push step: docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+
+name: Build and Push to Amazon ECR
+
+on:
+  #workflow_run:
+  #  workflows: [Train ML Model]
+  #  types: [completed]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Tag for the Container image"
+        required: true
+        default: "v1.0"
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ECR_name: public.ecr.aws/sctp-sandbox
+  APP_NAME: predict-buy-app
+
+jobs:
+  Build:
+    # Build the trained model into FastAPI Docker Image and Push Image to registry
+    name: Build & Push
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download trained-model artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: trained-model
+          path: models/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon Public ECR
+        run: aws ecr-public get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ECR_name }}
+
+      - name: Build, tag and push
+        id: build-image
+        env:
+          #IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is not workflow dispatch
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+        run: |
+          docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} -t ${{ env.APP_NAME }}:latest .
+          docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+          docker tag ${{ env.APP_NAME }}:latest ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }}:latest
+          docker push ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }} --all-tags
+          echo "IMAGE_NAME=${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Display Image Name
+        run: echo "The built image name is ${{ steps.build-image.outputs.IMAGE_NAME }}"
+#---------------------------------------
+# This is kept for future reference:
+# ECR Private Repo Login
+#- name: Login to Amazon Private ECR
+#  id: login-ecr
+#  uses: aws-actions/amazon-ecr-login@v1
+#---------------------------------------
