@@ -1,5 +1,5 @@
 # This workflow will build and push a new container image to Amazon ECR:
-#  - Previous docker push step: docker push public.ecr.aws/sctp-sandbox/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
+#  - Previous docker push step: docker push ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
 
 name: Build and Push to Amazon ECR
 
