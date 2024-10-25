@@ -4,8 +4,11 @@
 name: Build and Push to Amazon ECR
 
 on:
+  #pull_request:
+  #  branches:
+  #    - main
   #workflow_run:
-  #  workflows: [Train ML Model]
+  #  workflows: ["Train ML Model", "Retrain ML Model"]
   #  types: [completed]
   workflow_dispatch:
     inputs:
@@ -15,7 +18,6 @@ on:
         default: "v1.0"
 
 env:
-  AWS_REGION: us-east-1
   AWS_ECR_name: public.ecr.aws/sctp-sandbox
   APP_NAME: predict-buy-app
 
@@ -28,23 +30,30 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Download trained-model artifact
-        uses: actions/download-artifact@v2
+      - name: Install Python
+        uses: actions/setup-python@v4
         with:
-          name: trained-model
-          path: models/
+          python-version: "3.12" # Specify the required Python version
+
+      - name: Install DVC
+        uses: iterative/setup-dvc@v1
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon Public ECR
-        run: aws ecr-public get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ECR_name }}
+        run: aws ecr-public get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ECR_name }}
+
+      # Add step to dcv pull the latest model in order to build the latest API version ...
+      # Make sure to install and setup the runner environment first,
+      #- name: Pull from DVC
+      #  run: dvc pull
 
       - name: Build, tag and push
         id: build-image

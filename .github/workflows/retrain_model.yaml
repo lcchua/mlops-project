@@ -1,35 +1,63 @@
-# Monitoring Script
-- name: Monitor model
-  run: |
-    python src/monitor_model.py
+# Retraining Pipeline with previous and new incremental datasets,
+# there is no new data attributes or code refactor.
+name: Retrain ML Model
 
-# Retraining Pipeline
 on:
-  schedule:
-    - cron: '0 0 * * 1' # Every Monday at midnight
+  #schedule:
+  #  - cron: "0 0 * * 1" # Runs weekly every Monday at midnight
+  workflow_dispatch:
+
+env:
+  AWS_S3_STORAGE: s3://ce7-lcchua-project/ml_artefacts/
+  VER_TAG: ${{ github.sha }} -> Git commit hash value if not workflow dispatch
 
 jobs:
-  retrain:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-  
-    - name: Install packages and dependencies
+  Retrain:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12" # Specify the required Python version
+
+      - name: Install DVC
+        uses: iterative/setup-dvc@v1
+
+      - name: Install packages and dependencies
         run: make setup
-        
-    - name: Retrain model
-      run: |
-        python src/train_model.py
-    - name: Save retrained model
-      uses: actions/upload-artifact@v2
-      with:
-        name: retrained-model
-        path: models/
-    - name: Deploy retrained model
-      run: |
-        python src/deploy_model.py
 
+      - name: Get the training datasets # Simulate by creating new incremental datasets
+        run: make get_data
 
-    -name: Pull from DVC
-     run: dvc pull
+      - name: Retrain model
+        run: make run
+
+      - name: Test the trained model
+        run: make test
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Version ML artefacts
+        run: |
+          dvc add data/train.csv
+          git add data/train.csv.dvc
+          git commit -m "add training data ${{ env.VER_TAG }}"
+          dvc add models/modekl.pkl
+          git add models/model.pkl.dvc
+          git commit -m "add trained model ${{ env.VER_TAG }}"
+          dvc remote modify remote credentialpath ~/.aws/credentials
+          dvc remote add -d remote ${{ env.AWS_S3_STORAGE }}
+          dvc push
+          git push origin master
+
+      - name: Clean up the training environment
+        run: make clean
