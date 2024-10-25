@@ -7,7 +7,7 @@ setup:
 #	$(python) -m pip install --upgrade pip
 #	$(pip) install -r requirements.txt
 	python3 -m pip install --upgrade pip
-	pip install --upgrade -r requirements.txt
+	pip install -r requirements.txt
 
 get_data:
 #	$(python) dataset.py
