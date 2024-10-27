@@ -2,7 +2,7 @@ FROM python:3.12
 
 WORKDIR /app
 
-COPY app.py .
+COPY src_api/app.py .
 COPY models/ ./models/
 
 COPY requirements.txt .

@@ -11,14 +11,11 @@ setup:
 
 get_data:
 #	$(python) dataset.py
-	python3 dataset.py
+	python3 src_ml/dataset.py
 
 run:
 #	$(python) main.py
-	python3 main.py
-
-# mlflow:
-#	venv/bin/mlflow ui
+	python3 src_ml/main.py
 
 test:
 #	$(python) -m pytest
@@ -32,4 +29,5 @@ clean:
 
 remove:
 #	rm -rf venv
-	rm -rf mlruns
+#	rm -rf mlruns
+	dvc destroy
