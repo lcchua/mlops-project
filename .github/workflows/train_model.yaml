@@ -63,13 +63,13 @@ jobs:
           git add data/train.csv.dvc data/.gitignore
           git add data/test.csv.dvc data/.gitignore
           git commit -m "add training and testing data ${{ env.VER_TAG }}"
-          dvc add models/modekl.pkl
-          git add models/model.pkl.dvc
+          dvc add models/model.pkl
+          git add models/model.pkl.dvc models/.gitignore
           git commit -m "add trained model ${{ env.VER_TAG }}"
-          dvc remote modify remote credentialpath ~/.aws/credentials
           dvc remote add -d remote ${{ env.AWS_S3_STORAGE }}
+          dvc remote modify remote credentialpath ~/.aws/credentials
           dvc push
-          git push origin master
+          git push origin main
 
       - name: Clean up the training environment
         run: make clean
