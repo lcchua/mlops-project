@@ -33,8 +33,12 @@ jobs:
       - name: Install DVC
         uses: iterative/setup-dvc@v1
 
-      - name: Install packages and dependencies
-        run: make setup
+      - name: Create Python venv
+        run: |
+          python3 -m venv venv
+          echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Get the training datasets # Simulate by creating the datasets
         run: make get_data
