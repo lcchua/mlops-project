@@ -24,16 +24,17 @@ jobs:
         with:
           python-version: "3.12" # Specify the required Python version
 
-      - name: Install DVC
-        uses: iterative/setup-dvc@v1
+      - name: Create and update Python ML venv
+        run: | # inclusive of dvc[s3] install
+          python3 -m venv venv
+          echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV 
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Install packages and dependencies
-        run: make setup
+      - name: Pull from DVC
+        run: dvc pull data/train.csv data/test.csv
 
-      - name: Get the training datasets # Simulate by creating new incremental datasets
-        run: make get_data
-
-      - name: Retrain model
+      - name: Train the prediction model
         run: make run
 
       - name: Test the trained model
@@ -46,18 +47,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Version ML artefacts
+      - name: Version ML and Git artefacts
         run: |
           dvc add data/train.csv
-          git add data/train.csv.dvc
-          git commit -m "add training data ${{ env.VER_TAG }}"
-          dvc add models/modekl.pkl
-          git add models/model.pkl.dvc
+          dvc add data/test.csv
+          git add data/train.csv.dvc data/.gitignore
+          git add data/test.csv.dvc data/.gitignore
+          git commit -m "add training and testing data ${{ env.VER_TAG }}"
+          dvc add models/model.pkl
+          git add models/model.pkl.dvc models/.gitignore
           git commit -m "add trained model ${{ env.VER_TAG }}"
-          dvc remote modify remote credentialpath ~/.aws/credentials
           dvc remote add -d remote ${{ env.AWS_S3_STORAGE }}
+          dvc remote modify remote credentialpath ~/.aws/credentials
           dvc push
-          git push origin master
+          git push origin main
+          git add .
+
+      - name: Commit & push Git changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Clean up the training environment
         run: make clean

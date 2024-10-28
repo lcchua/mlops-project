@@ -51,7 +51,7 @@ jobs:
           pip install dvc[s3]
 
       - name: Pull from DVC
-        run: dvc pull
+        run: dvc pull models/model.pkl
 
       - name: Login to Amazon Public ECR
         run: aws ecr-public get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ECR_name }}

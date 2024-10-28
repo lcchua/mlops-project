@@ -31,17 +31,18 @@ jobs:
           python-version: "3.12" # Specify the required Python version
 
       - name: Install DVC
-        uses: iterative/setup-dvc@v1 # Ensure that dvc init has ran and .dvc is in Git repo
-
-      - name: Create Python venv
         run: |
+          pip install dvc[s3]
+
+      - name: Create and update Python ML venv
+        run: | # inclusive of dvc[s3] install
           python3 -m venv venv
           echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV 
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Get the training datasets # Simulate by creating the datasets
-        run: make get_data
+      - name: Pull from DVC
+        run: dvc pull data/train.csv data/test.csv
 
       - name: Train the prediction model
         run: make run
@@ -56,7 +57,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Version ML artefacts
+      - name: Version ML and Git artefacts
         run: |
           dvc add data/train.csv
           dvc add data/test.csv

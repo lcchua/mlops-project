@@ -1,7 +1,7 @@
 
-# Add AWS S3 copy command to pull training and testing datasets from S3 bucket
-get_data:
-	python3 dataset.py
+# Add AWS S3 copy command to pull training and testing datasets from S3 bucket? Or dvc pull?
+# get_data:
+# python3 dataset.py
 
 run:
 	python3 main.py
