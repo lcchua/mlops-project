@@ -31,4 +31,4 @@ clean:
 
 remove:
 	rm -rf venv
-	dvc destroy -f
+	dvc destroy -fq
