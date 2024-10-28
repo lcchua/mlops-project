@@ -13,7 +13,7 @@ on:
 
 env:
   AWS_S3_STORAGE: s3://ce7-lcchua-project/ml_artefacts/
-  VER_TAG: ${{ github.sha }} -> Git commit hash value if not workflow dispatch
+  VER_TAG: ${{ github.sha }}
   # VER_TAG: ${{ github.event.inputs.ver_tag }}
 
 jobs:
