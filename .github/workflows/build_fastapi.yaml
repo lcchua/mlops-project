@@ -21,7 +21,7 @@ on:
 
 env:
   AWS_ECR_name: public.ecr.aws/sctp-sandbox
-  APP_NAME: predict-buy-app
+  APP_NAME: lcchua-predict-buy-app
 
 jobs:
   Build:
@@ -49,13 +49,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - name: Pull from DVC
+        run: dvc pull
+
       - name: Login to Amazon Public ECR
         run: aws ecr-public get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ECR_name }}
-
-      # Add step to dcv pull the latest model in order to build the latest API version ...
-      # Make sure to install and setup the runner environment first,
-      #- name: Pull from DVC
-      #  run: dvc pull
 
       - name: Build, tag and push
         id: build-image
