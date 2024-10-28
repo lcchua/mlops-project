@@ -3,12 +3,11 @@
 name: Train ML Model
 
 on:
-  #push:
-  #  branches:
-  #    - main
   #pull_request:
   #  branches:
   #    - main
+  #  paths:
+  #    - '*.py'
   workflow_dispatch:
 
 env:

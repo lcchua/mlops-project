@@ -1,33 +1,34 @@
 # Omitted Python virtual environment creation in this project
-# python = venv/bin/python
-# pip = venv/bin/pip
+ python = venv/bin/python
+ pip = venv/bin/pip
 
 setup:
-#	python3 -m venv venv
-#	$(python) -m pip install --upgrade pip
-#	$(pip) install -r requirements.txt
-	python3 -m pip install --upgrade pip
-	pip install -r requirements.txt
+	python3 -m venv venv
+	$(python) -m pip install --upgrade pip
+	$(pip) install -r requirements.txt
 
 get_data:
-#	$(python) dataset.py
-	python3 src_ml/dataset.py
+	source venv/bin/activate
+	$(python) dataset.py
+	venv/bin/deactivate
 
 run:
-#	$(python) main.py
-	python3 src_ml/main.py
+	source venv/bin/activate
+	$(python) main.py
+	venv/bin/deactivate
 
 test:
-#	$(python) -m pytest
-	python3 -m pytest
+	source venv/bin/activate
+	$(python) -m pytest
+	venv/bin/deactivate
 		
 clean:
 	rm -rf steps/__pycache__
 	rm -rf __pycache__
 	rm -rf .pytest_cache
 	rm -rf tests/__pycache__
+	rm data/*.csv
 
 remove:
-#	rm -rf venv
-#	rm -rf mlruns
-	dvc destroy
+	rm -rf venv
+	dvc destroy -f
