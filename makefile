@@ -1,4 +1,5 @@
 
+# Add AWS S3 copy command to pull training and testing datasets from S3 bucket
 get_data:
 	python3 dataset.py
 
