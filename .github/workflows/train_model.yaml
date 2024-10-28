@@ -31,7 +31,7 @@ jobs:
           python-version: "3.12" # Specify the required Python version
 
       - name: Install DVC
-        uses: iterative/setup-dvc@v1
+        uses: iterative/setup-dvc@v1 # Ensure that dvc init has ran and .dvc is in Git repo
 
       - name: Create Python venv
         run: |
