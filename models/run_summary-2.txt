@@ -1,0 +1,17 @@
+python3 main.py
+
+============= Model Evaluation Results ==============
+Model: GradientBoostingClassifier
+Accuracy Score: 0.8303, ROC AUC Score: 0.7201
+
+              precision    recall  f1-score   support
+
+           0       0.94      0.87      0.90     85582
+           1       0.37      0.57      0.45     11752
+
+    accuracy                           0.83     97334
+   macro avg       0.65      0.72      0.67     97334
+weighted avg       0.87      0.83      0.85     97334
+
+=====================================================
+

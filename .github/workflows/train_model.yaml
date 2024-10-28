@@ -36,7 +36,7 @@ jobs:
       - name: Create Python venv
         run: |
           python3 -m venv venv
-          echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV
+          echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV 
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -59,8 +59,10 @@ jobs:
       - name: Version ML artefacts
         run: |
           dvc add data/train.csv
-          git add data/train.csv.dvc
-          git commit -m "add training data ${{ env.VER_TAG }}"
+          dvc add data/test.csv
+          git add data/train.csv.dvc data/.gitignore
+          git add data/test.csv.dvc data/.gitignore
+          git commit -m "add training and testing data ${{ env.VER_TAG }}"
           dvc add models/modekl.pkl
           git add models/model.pkl.dvc
           git commit -m "add trained model ${{ env.VER_TAG }}"
