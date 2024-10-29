@@ -42,8 +42,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Pull from DVC # to check if there are changes to the dataset and run the remaining steps only if so
-        run: dvc pull data/train.csv data/test.csv
+      # Model training on the basis of .py source changes or both data and .py source changes
+      - name: Pull datasets from S3
+        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --recursive
 
       - name: Train the prediction model
         run: make run
