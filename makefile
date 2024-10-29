@@ -1,8 +1,7 @@
 
 setup:
 	python3 -m venv venv
-	export PATH="$(pwd)/venv/bin:$PATH"
-	source venv/bin/activate
+	export "PATH=$(pwd)/venv/bin:$PATH"
 	python3 -m pip install --upgrade pip
 	pip install -r requirements.txt
 

@@ -47,7 +47,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Pull from S3 bucket
+      - name: Pull datasets from S3
         run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --recursive
 
       - name: Train the prediction model
