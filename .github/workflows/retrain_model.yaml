@@ -43,6 +43,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       # Model training on the basis of .py source changes or both data and .py source changes
+      #    ??? To add conditional check for no .py source changes or both data/.py source changes then execute workflow ???
       - name: Pull datasets from S3
         run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --recursive
 
