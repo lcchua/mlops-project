@@ -1,5 +1,0 @@
-[core]
-    remote = remote
-['remote "remote"']
-    url = s3://ce7-lcchua-project/ml_artefacts/
-    credentialpath = /Users/laich/.aws/credentials

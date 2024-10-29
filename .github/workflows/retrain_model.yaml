@@ -58,7 +58,6 @@ jobs:
           git add models/model.pkl.dvc models/.gitignore
           git commit -m "add trained model ${{ env.VER_TAG }}"
           dvc remote add -d remote ${{ env.AWS_S3_STORAGE }}
-          dvc remote modify remote credentialpath ~/.aws/credentials
           dvc push
           git push origin main
           git add .
