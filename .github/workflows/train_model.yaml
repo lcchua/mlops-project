@@ -7,13 +7,16 @@ on:
   #  branches:
   #    - main
   #  paths:
-  #    - '*.py'
+  #    - 'main.py'
+  #    - 'config.yml'
+  #    - 'steps/*.py'
   workflow_dispatch:
 
 env:
-  AWS_S3_STORAGE: s3://ce7-lcchua-project/ml_artefacts/
+  ML_ARTEFACTS_S3: s3://ce7-lcchua-project/ml_artefacts/
+  ML_DATASETS_S3: s3://ce7-lcchua-project/ml_datasets/
   VER_TAG: ${{ github.sha }}
-  # VER_TAG: ${{ github.event.inputs.ver_tag }}
+  #VER_TAG: ${{ github.event.inputs.ver_tag }}
 
 jobs:
   Train:
@@ -41,21 +44,21 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Pull from DVC
-        run: dvc pull data/train.csv data/test.csv
-
-      - name: Train the prediction model
-        run: make run
-
-      - name: Test the trained model
-        run: make test
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Pull from S3 bucket
+        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/
+
+      - name: Train the prediction model
+        run: make run
+
+      - name: Test the trained model
+        run: make test
 
       - name: Version ML and Git artefacts
         run: |
@@ -67,7 +70,7 @@ jobs:
           dvc add models/model.pkl
           git add models/model.pkl.dvc models/.gitignore
           git commit -m "add trained model ${{ env.VER_TAG }}"
-          dvc remote add -d remote ${{ env.AWS_S3_STORAGE }}
+          dvc remote add -d remote ${{ env.ML_ARTEFACTS_S3 }}
           dvc remote modify remote credentialpath ~/.aws/credentials
           dvc push
           git push origin main

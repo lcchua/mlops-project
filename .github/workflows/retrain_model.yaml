@@ -3,9 +3,9 @@
 name: Retrain ML Model
 
 on:
-  #schedule:
-  #  - cron: "0 0 * * 1" # Runs weekly every Monday at midnight
-  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1" # Runs weekly every Monday at midnight
+  #workflow_dispatch:
 
 env:
   AWS_S3_STORAGE: s3://ce7-lcchua-project/ml_artefacts/
@@ -31,7 +31,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Pull from DVC
+      - name: Pull from DVC # to check if there are changes to the dataset and run the remaining steps only if so
         run: dvc pull data/train.csv data/test.csv
 
       - name: Train the prediction model

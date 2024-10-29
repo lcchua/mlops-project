@@ -5,10 +5,12 @@ name: Build and Push to Amazon ECR
 
 on:
   #pull_request:
+  #  types: [closed]
   #  branches:
   #    - main
   #  paths:
-  #    - '*.py'
+  #    - "app.py"
+  #    - "dockerfile"
   #workflow_run:
   #  workflows: ["Train ML Model", "Retrain ML Model"]
   #  types: [completed]
@@ -27,6 +29,7 @@ jobs:
   Build:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
     name: Build & Push
+    #if: github.event.pull_request.merged
     runs-on: ubuntu-latest
     environment: development
 
@@ -59,8 +62,8 @@ jobs:
       - name: Build, tag and push
         id: build-image
         env:
-          #IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is not workflow dispatch
-          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+          IMAGE_TAG: ${{ github.sha }} -> Git commit hash value if workflow trigger is not workflow dispatch
+          #IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
           docker build -t ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} -t ${{ env.APP_NAME }}:latest .
           docker tag ${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }} ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
