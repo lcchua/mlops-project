@@ -33,10 +33,6 @@ jobs:
         with:
           python-version: "3.12" # Specify the required Python version
 
-      - name: Install DVC
-        run: |
-          pip install dvc[s3]
-
       - name: Create and update Python ML venv
         run: | # inclusive of dvc[s3] install
           python3 -m venv venv
@@ -52,7 +48,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Pull from S3 bucket
-        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/
+        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --recursive
 
       - name: Train the prediction model
         run: make run

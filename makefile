@@ -1,7 +1,10 @@
 
-# Add AWS S3 copy command to pull training and testing datasets from S3 bucket? Or dvc pull?
-# get_data:
-# python3 dataset.py
+setup:
+  python3 -m venv venv
+	export PATH=$(pwd)/venv/bin:$PATH
+	source venv/bin/activate
+  python3 -m pip install --upgrade pip
+  pip install -r requirements.txt
 
 run:
 	python3 main.py
