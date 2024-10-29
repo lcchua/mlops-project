@@ -33,10 +33,13 @@ jobs:
         with:
           python-version: "3.12" # Specify the required Python version
 
-      - name: Create and update Python ML venv
+      - name: Create Python ML venv
         run: | # inclusive of dvc[s3] install
           python3 -m venv venv
-          echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV 
+          echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Install packages and dependencies
+        run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -67,7 +70,6 @@ jobs:
           git add models/model.pkl.dvc models/.gitignore
           git commit -m "add trained model ${{ env.VER_TAG }}"
           dvc remote add -d remote ${{ env.ML_ARTEFACTS_S3 }}
-          dvc remote modify remote credentialpath ~/.aws/credentials
           dvc push
           git push origin main
           git add .
