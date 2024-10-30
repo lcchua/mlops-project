@@ -20,6 +20,7 @@ clean:
 	rm -rf .pytest_cache
 	rm -rf tests/__pycache__
 	rm -f data/*.csv
+	tm -f *.csv
 	rm -f models/model.pkl
 
 remove:

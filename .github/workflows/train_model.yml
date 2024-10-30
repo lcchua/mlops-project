@@ -10,17 +10,17 @@ on:
       - main.py
       - config.yml
       - steps/*.py
+      - requirements.txt
   workflow_dispatch:
 
 env:
-  ML_ARTEFACTS_S3: s3://ce7-lcchua-project/ml_artefacts/
-  ML_DATASETS_S3: s3://ce7-lcchua-project/ml_datasets/
+  ML_ARTEFACTS_S3: s3://ce7-grp1-project/dvc_artefacts/
+  ML_DATASETS_S3: s3://ce7-grp1-project/new_datasets/
   VER_TAG: ${{ github.sha }}
-  #VER_TAG: ${{ github.event.inputs.ver_tag }}
 
 jobs:
   Train:
-    name: Train ML Model first-time
+    name: Train or Retrain ML Model
     runs-on: ubuntu-latest
     environment: development
 
@@ -50,14 +50,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      # Model training on the basis of data changes only, or both data and .py source changes
-      #    ??? To add conditional check for no data and/or .py source changes then do not execute workflow ???
-      - name: Pull datasets from S3
-        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --recursive
-
-      # Model training on the basis of no data attribute changes but there is only .py source changes.
+    # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
       - name: Pull from DVC
         run: dvc pull data/train.csv data/test.csv
+
+    # Latest new datasets are placed in S3 'new_datasets' folder,
+    # if new datasets exist then overide the dvc-pulled datasets
+      - name: Pull datasets from S3
+        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --quiet --recursive
 
       - name: Train the prediction model
         run: make run
@@ -87,3 +87,7 @@ jobs:
 
       - name: Clean up the training environment
         run: make clean
+#-------------------------------------------------------------------------
+# Keep in storage:
+# a) dvc remote modify --local remote credentialpath ~/.aws/credentials
+#-------------------------------------------------------------------------
