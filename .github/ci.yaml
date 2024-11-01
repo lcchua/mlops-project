@@ -1,0 +1,139 @@
+name: Build, Test and Scan
+
+on:
+  push:
+    tags:
+    - 'v*'
+    branches:
+    - develop
+    - feature/**
+    - release/**
+    - main
+
+jobs:
+  env-check-dev:
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "DEV IMAGE_NAME = ${{ vars.IMAGE_NAME }}"
+          echo "DEV IMAGE_URL = ${{ vars.IMAGE_URL }}"
+          echo "DEV USER_GROUP = ${{ vars.USER_GROUP }}"
+          echo "DEV REGION = ${{ vars.REGION }}"
+
+  env-check-uat:
+    environment: uat
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "UAT IMAGE_NAME = ${{ vars.IMAGE_NAME }}"
+          echo "UAT IMAGE_URL = ${{ vars.IMAGE_URL }}"
+          echo "UAT USER_GROUP = ${{ vars.USER_GROUP }}"
+          echo "UAT REGION = ${{ vars.REGION }}"
+
+  env-check-qa:
+    environment: qa
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "QA IMAGE_NAME = ${{ vars.IMAGE_NAME }}"
+          echo "QA IMAGE_URL = ${{ vars.IMAGE_URL }}"
+          echo "QA USER_GROUP = ${{ vars.USER_GROUP }}"
+          echo "QA REGION = ${{ vars.REGION }}"
+
+  env-check-prod:
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "PROD IMAGE_NAME = ${{ vars.IMAGE_NAME }}"
+          echo "PROD IMAGE_URL = ${{ vars.IMAGE_URL }}"
+          echo "PROD USER_GROUP = ${{ vars.USER_GROUP }}"
+          echo "PROD REGION = ${{ vars.REGION }}"
+
+  pre-deploy:
+    needs: [env-check-dev, env-check-uat, env-check-qa, env-check-prod]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+
+  code-unit-testing:
+    runs-on: ubuntu-latest
+    needs: pre-deploy
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Run installation of dependencies commands
+        run: echo "Run npm install"
+
+  code-vulnerability-scanning:
+    runs-on: ubuntu-latest
+    needs: pre-deploy
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Run vulernability scan
+        run: |
+          echo "To do"
+          echo "Add scanning"
+
+  check-tag:
+    runs-on: ubuntu-latest
+    needs: [code-unit-testing, code-vulnerability-scanning]
+    outputs:
+      LATEST_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Fetch All Tags
+        run: git fetch --tags
+
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: | 
+          echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> "$GITHUB_OUTPUT"
+          echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
+
+      - name: Output Latest Tag
+        run: echo "The latest tag is ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
+
+  print-tag:
+    runs-on: ubuntu-latest
+    needs: check-tag
+    steps:
+      - name: Docker build and tag simulation
+        run: |
+          echo "docker build -t ${{ vars.IMAGE }}"
+          echo "docker tag ${{ vars.IMAGE }}:${{ needs.check-tag.outputs.LATEST_TAG }} ${{ vars.ECR_URL }}/${{ vars.IMAGE }}:${{ needs.check-tag.outputs.LATEST_TAG }}"
+          echo "docker push ${{ vars.ECR_URL }}/${{ vars.IMAGE }}:${{ needs.check-tag.outputs.LATEST_TAG }}"
+
+  deploy-image-dev:
+    needs: [check-tag, print-tag]
+    name: "Deployed image to dev"
+    uses: luqmannnn/github-actions-env-selection/.github/workflows/cd.yaml@main
+    with:
+      target_env: "dev"
+      version: "latest"
+    secrets: inherit
+    if: ${{ github.ref_name == 'main' || github.ref_name == 'develop' || startsWith(github.ref_name, 'feature/') }}
+
+  deploy-image-uat:
+    needs: [check-tag, print-tag]
+    name: "Deployed image to uat"
+    uses: luqmannnn/github-actions-env-selection/.github/workflows/cd.yaml@main
+    with:
+      target_env: "uat"
+      version: ${{ needs.check-tag.outputs.LATEST_TAG }}
+    secrets: inherit
+    if: ${{ startsWith(github.ref_name, 'release/') }}
+
+  deploy-image-prod:
+    needs: [check-tag, print-tag, deploy-image-uat]
+    name: "Deployed image to prod"
+    uses: luqmannnn/github-actions-env-selection/.github/workflows/cd.yaml@main
+    with:
+      target_env: "prod"
+      version: ${{ needs.check-tag.outputs.LATEST_TAG }}
+    secrets: inherit
+    if: ${{ startsWith(github.ref_name, 'release/') }}
