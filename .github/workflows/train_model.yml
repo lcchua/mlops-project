@@ -14,8 +14,8 @@ on:
   workflow_dispatch:
 
 env:
-  ML_ARTEFACTS_S3: s3://ce7-grp1-project/dvc_artefacts/
-  ML_DATASETS_S3: s3://ce7-grp1-project/new_datasets/
+  ML_ARTEFACTS_S3: s3://ce7-grp1-project/DVC_artefacts/
+  ML_DATASETS_S3: s3://ce7-grp1-project/new_ML_data/
   VER_TAG: ${{ github.sha }}
 
 jobs:
