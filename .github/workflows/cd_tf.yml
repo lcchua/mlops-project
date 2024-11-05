@@ -1,6 +1,7 @@
 # Getting ready to test the workflow run on workflow dispatch with input selection event
 
 name: Terraform CD
+
 on:
   #push:
   #  branches: [ "main"]
