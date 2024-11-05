@@ -7,8 +7,8 @@
 
 # Bucket with versioning enabled
 resource "aws_s3_bucket" "this" {
-#  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
-  bucket = "${var.ml_s3bucket_name}"
+  #  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
+  bucket = var.ml_s3bucket_name
 
   tags = {
     group = var.stack_name
