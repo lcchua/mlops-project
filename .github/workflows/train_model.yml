@@ -13,8 +13,8 @@ on:
   workflow_dispatch:
 
 env:
-  ML_ARTEFACTS_S3: s3://ce7-grp1-project/DVC_artefacts/
-  ML_DATASETS_S3: s3://ce7-grp1-project/new_ML_data/
+  ML_ARTEFACTS_S3: s3://ce7-grp-1-project/DVC_artefacts/
+  ML_DATASETS_S3: s3://ce7-grp-1-project/new_ML_data/
   VER_TAG: ${{ github.sha }}
 
 jobs:
@@ -33,12 +33,12 @@ jobs:
           python-version: "3.12" # Specify the required Python version
 
       - name: Create Python ML venv
-        run: | # inclusive of dvc[s3] install
+        run: | 
           python3 -m venv venv
           echo "PATH=$(pwd)/venv/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install packages and dependencies
-        run: |
+        run: | # inclusive of dvc[s3] install
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
