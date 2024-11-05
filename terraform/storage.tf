@@ -1,13 +1,14 @@
 #============ S3 BUCKET =============
 
 # Generate a random identifier
-resource "random_id" "suffix_s3" {
-  byte_length = 2
-}
+#resource "random_id" "suffix_s3" {
+#  byte_length = 2
+#}
 
 # Bucket with versioning enabled
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
+#  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
+  bucket = "${var.ml_s3bucket_name}"
 
   tags = {
     group = var.stack_name

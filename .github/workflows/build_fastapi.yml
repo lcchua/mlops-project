@@ -6,12 +6,11 @@ name: Build and Push to Amazon ECR
 on:
   #pull_request:
   #  types: [closed]
-  #  branches:
-  #    - main
+  #  branches: [ "main" ]
   #  paths:
-  #    - app.py
-  #    - dockerfile
-  #    - requirements.txt
+  #    - 'app.py'
+  #    - 'dockerfile'
+  #    - 'requirements.txt'
   #workflow_run:
   #  workflows: ["Train ML Model"]
   #  types: [completed]

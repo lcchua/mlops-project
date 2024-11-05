@@ -3,14 +3,13 @@
 name: Train ML Model
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - main.py
-      - config.yml
-      - steps/*.py
-      - requirements.txt
+  #pull_request:
+  #  branches: [ "main" ]
+  #  paths:
+  #    - 'main.py'
+  #    - 'config.yml'
+  #    - 'steps/*.py'
+  #    - 'requirements.txt'
   workflow_dispatch:
 
 env:
@@ -52,7 +51,7 @@ jobs:
 
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
       - name: Pull from DVC
-        run: dvc pull data/train.csv data/test.csv
+        run: dvc pull --allow-missing data/train.csv data/test.csv
 
     # Latest new datasets are placed in S3 'new_datasets' folder,
     # if new datasets exist then overide the dvc-pulled datasets

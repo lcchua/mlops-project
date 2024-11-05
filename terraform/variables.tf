@@ -14,7 +14,7 @@ variable "region" {
 variable "ml_s3bucket_name" {
   description = "Name of S3 bucket for ML artefacts and datasets"
   type        = string
-  default     = "ce7-proj-grp1-bucket"
+  default     = "ce7-proj-grp-1-bucket"
 }
 
 variable "MLdata_s3bucket_folder_name" {

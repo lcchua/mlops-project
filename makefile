@@ -8,19 +8,18 @@ setup_py:
 	python3 -m pip install --upgrade pip
 	pip install -r requirements.txt
 
-run:
+train:
 	python3 main.py
 
 test:
 	python3 -m pytest
 		
-clean:
+cleanup:
 	rm -rf steps/__pycache__
 	rm -rf __pycache__
 	rm -rf .pytest_cache
 	rm -rf tests/__pycache__
 	rm -f data/*.csv
-	tm -f *.csv
 	rm -f models/model.pkl
 
 remove:
