@@ -48,9 +48,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-    # To intialise dvc tracking if and only if it ahs not been set up for
+    # To intialise dvc tracking if and only if it has not been set up for
     # the first-time already
-      - name: First-time initialise DVC
+      - name: First-time initialise DVC only
         run: |
           ! test -d ".dvc" && make setup_dvc
         continue-on-error: true

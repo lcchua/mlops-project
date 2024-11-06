@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "this" {
   }
 }
 output "ecr_repo_app_url" {
-  description = "dev stw ECR public repo app_image"
+  description = "dev stw ECR private repo app_image"
   value       = aws_ecr_repository.this.repository_url
 }
 
