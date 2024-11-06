@@ -100,9 +100,12 @@ jobs:
           git commit .dvc/config -m "configure dvc remote storage"
           dvc push
           git push origin main
+          git add .
+          git commit -m "update .dvc to Git repo"
+          git push
 
-      - name: Clean up the training environment
-        run: make clean
+#      - name: Clean up the training environment
+#        run: make clean
 #-------------------------------------------------------------------------
 # Keep in storage:
 # a) dvc remote modify --local remote credentialpath ~/.aws/credentials
