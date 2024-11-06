@@ -91,12 +91,6 @@ jobs:
           dvc remote add -d remote ${{ env.ML_ARTEFACTS_S3 }}
           dvc push
           git push origin main
-          git add .
-
-      - name: Commit & push Git changes
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Clean up the training environment
         run: make clean
