@@ -52,7 +52,7 @@ jobs:
     # the first-time already
       - name: First-time initialise DVC only
         run: |
-          if [ ! test -d ".dvc" ]; then
+          if ! test -d .dvc; then
             dvc init
             git config --global user.name "lcchua"
             git config --global user.email "laichwang@gmail.com"
