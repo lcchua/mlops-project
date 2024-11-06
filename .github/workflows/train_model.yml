@@ -14,8 +14,7 @@ on:
 
 env:
   ML_ARTEFACTS_S3: s3://ce7-grp-1-project/DVC_artefacts/
-  ML_DATASETS_S3: s3://ce7-grp-1-project/new_ML_data/
-  VER_TAG: ${{ github.sha }}
+  ML_NEW_DATA_S3: s3://ce7-grp-1-project/new_ML_data/
 
 jobs:
   Train:
@@ -62,7 +61,7 @@ jobs:
     # Latest new datasets are placed in S3 'new_datasets' folder,
     # if new datasets exist then overide the dvc-pulled datasets
       - name: Pull datasets from S3
-        run: aws s3 cp ${{ env.ML_DATASETS_S3 }} data/ --quiet --recursive
+        run: aws s3 cp ${{ env.ML_NEW_DATA_S3 }} data/ --quiet --recursive
 
       - name: Train the prediction model
         run: make run
@@ -70,16 +69,23 @@ jobs:
       - name: Test the trained model
         run: make test
 
+      - name: Fetch all tags to get the latest
+        id: get_latest_tag
+        run: |
+          git fetch --tags
+          echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> "$GITHUB_OUTPUT"
+          echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
+
       - name: Version ML and Git artefacts
         run: |
           dvc add data/train.csv
           dvc add data/test.csv
           git add data/train.csv.dvc data/.gitignore
           git add data/test.csv.dvc data/.gitignore
-          git commit -m "add training and testing data ${{ env.VER_TAG }}"
+          git commit -m "add training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
           dvc add models/model.pkl
           git add models/model.pkl.dvc models/.gitignore
-          git commit -m "add trained model ${{ env.VER_TAG }}"
+          git commit -m "add trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
           dvc remote add -d remote ${{ env.ML_ARTEFACTS_S3 }}
           dvc push
           git push origin main
