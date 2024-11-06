@@ -1,15 +1,18 @@
 import logging
-#import yaml
+
+# import yaml
 # import mlflow
 # import mlflow.sklearn
 from steps.ingest import Ingestion
 from steps.clean import Cleaner
 from steps.train import Trainer
 from steps.predict import Predictor
-#from sklearn.metrics import classification_report
+
+# from sklearn.metrics import classification_report
 
 # Set up logging
-logging.basicConfig(level=logging.INFO,format='%(asctime)s:%(levelname)s:%(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(message)s")
+
 
 def main():
     # Load data
@@ -35,7 +38,7 @@ def main():
     X_test, y_test = predictor.feature_target_separator(test_data)
     accuracy, class_report, roc_auc_score = predictor.evaluate_model(X_test, y_test)
     logging.info("Model evaluation completed successfully")
-    
+
     # Print evaluation results
     print("\n============= Model Evaluation Results ==============")
     print(f"Model: {trainer.model_name}")
@@ -104,7 +107,7 @@ def main():
         print(f"Accuracy Score: {accuracy:.4f}, ROC AUC Score: {roc_auc_score:.4f}")
         print(f"\n{class_report}")
         print("=====================================================\n") """
-        
+
 if __name__ == "__main__":
     main()
     # train_with_mlflow()

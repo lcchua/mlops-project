@@ -1,12 +1,21 @@
 
+# NOTE THAT setup_vv, setup_py and setup_dvc unlike the targets
+# are only run from the command-line interactively and not in the
+# GitHub Actions workflows.
+
 setup_vv:
 	python3 -m venv venv
 	export "PATH=$(pwd)/venv/bin:$PATH"
+	echo "!!! Make sure to run 'source venv/bin/activate' next before 'make setup_py'"
 
 setup_py:
-	source venv/bin/activate
 	python3 -m pip install --upgrade pip
 	pip install -r requirements.txt
+
+setup_dvc:
+	dvc init
+	git commit -m "initialise dvc tracking"
+	git push
 
 train:
 	python3 main.py

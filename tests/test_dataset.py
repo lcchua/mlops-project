@@ -3,22 +3,20 @@ import pandas as pd
 from unittest.mock import patch, mock_open
 from steps.ingest import Ingestion
 
+
 # Sample configuration data
 @pytest.fixture
 def config_data():
-    return {
-        'data': {
-            'train_path': 'train.csv',
-            'test_path': 'test.csv'
-        }
-    }
+    return {"data": {"train_path": "train.csv", "test_path": "test.csv"}}
+
 
 # Sample CSV data
 @pytest.fixture
 def sample_data():
-    train_data = pd.DataFrame({'col1': [1, 2], 'col2': [3, 4]})
-    test_data = pd.DataFrame({'col1': [5, 6], 'col2': [7, 8]})
+    train_data = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
+    test_data = pd.DataFrame({"col1": [5, 6], "col2": [7, 8]})
     return train_data, test_data
+
 
 @patch("builtins.open", new_callable=mock_open, read_data="dummy")
 @patch("yaml.safe_load")
@@ -38,5 +36,5 @@ def test_load_data(mock_read_csv, mock_safe_load, mock_open, config_data, sample
     pd.testing.assert_frame_equal(test_data, sample_data[1])
 
     # Verify the correct file paths were read
-    mock_read_csv.assert_any_call('train.csv')
-    mock_read_csv.assert_any_call('test.csv')
+    mock_read_csv.assert_any_call("train.csv")
+    mock_read_csv.assert_any_call("test.csv")
