@@ -13,8 +13,8 @@ on:
   workflow_dispatch:
 
 env:
-  ML_ARTEFACTS_S3: s3://ce7-grp-1-project/DVC_artefacts/
-  ML_NEW_DATA_S3: s3://ce7-grp-1-project/new_ML_data/
+  ML_ARTEFACTS_S3: s3://ce7-grp-1-proj/DVC_artefacts/
+  ML_NEW_DATA_S3: s3://ce7-grp-1-proj/new_ML_data/
 
 jobs:
   Train:
@@ -52,11 +52,13 @@ jobs:
     # the first-time already
       - name: First-time initialise DVC
         run: |
-          test -d ".dvc" && make setup_dvc
+          ! test -d ".dvc" && make setup_dvc
+        continue-on-error: true
 
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
       - name: Pull from DVC
         run: dvc pull --allow-missing data/train.csv data/test.csv
+        continue-on-error: true
 
     # Latest new datasets are placed in S3 'new_datasets' folder,
     # if new datasets exist then overide the dvc-pulled datasets

@@ -2,7 +2,7 @@
 
 variable "stack_name" {
   type    = string
-  default = "ce7-proj-grp1-stw"
+  default = "ce7-proj-grp-1-stw"
 }
 
 variable "region" {
@@ -14,7 +14,7 @@ variable "region" {
 variable "ml_s3bucket_name" {
   description = "Name of S3 bucket for ML artefacts and datasets"
   type        = string
-  default     = "ce7-proj-grp-1-bucket"
+  default     = "ce7-grp-1-proj"
 }
 
 variable "MLdata_s3bucket_folder_name" {
@@ -30,7 +30,7 @@ variable "DVC_s3bucket_folder_name" {
 }
 
 variable "ecr_repo_appname" {
-  description = "Path name of application in ECR public repo"
+  description = "Namespace/name of application in ECR public repo"
   type        = string
-  default     = "predict-buy-app"
+  default     = "ce7-grp-1/predict-buy-app"
 }

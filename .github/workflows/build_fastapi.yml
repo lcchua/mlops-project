@@ -65,7 +65,7 @@ jobs:
         id: build-image
         env:
           ECR_REPO_APPNAME: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_NAME: predict-buy-app
+          IMAGE_NAME: ce7-grp-1/predict-buy-app
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} -t ${{ env.IMAGE_NAME }}:latest .
           docker tag ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} ${{ env.ECR_REPO_APPNAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}
