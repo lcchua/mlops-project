@@ -35,3 +35,4 @@ cleanup:
 remove:
 	rm -rf venv
 	dvc destroy -fq
+	rm -rf .dvc
