@@ -52,8 +52,14 @@ jobs:
     # the first-time already
       - name: First-time initialise DVC only
         run: |
-          ! test -d ".dvc" && make setup_dvc
-        continue-on-error: true
+          if [ ! test -d ".dvc" ]; then
+            dvc init
+            git config --global user.name "lcchua"
+            git config --global user.email "laichwang@gmail.com"
+            git add .
+            git commit -m "initialise dvc trcaking"
+            git push
+          fi
 
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
       - name: Pull from DVC
@@ -66,10 +72,10 @@ jobs:
         run: aws s3 cp ${{ env.ML_NEW_DATA_S3 }} data/ --quiet --recursive
 
       - name: Train the prediction model
-        run: make train
+        run: python3 main.py
 
       - name: Test the trained model
-        run: make test
+        run: python3 -m pytest
 
       - name: Fetch all tags to get the latest
         id: get_latest_tag
