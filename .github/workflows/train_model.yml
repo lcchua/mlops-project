@@ -84,11 +84,12 @@ jobs:
           dvc add data/test.csv
           git add data/train.csv.dvc data/.gitignore
           git add data/test.csv.dvc data/.gitignore
-          git commit -m "add training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
+          git commit -m "update training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
           dvc add models/model.pkl
           git add models/model.pkl.dvc models/.gitignore
-          git commit -m "add trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
+          git commit -m "update trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
           dvc remote add -d remote ${{ env.ML_ARTEFACTS_S3 }}
+          git commit .dvc/config -m "configure dvc remote storage"
           dvc push
           git push origin main
 
