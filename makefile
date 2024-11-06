@@ -14,6 +14,7 @@ setup_py:
 
 setup_dvc:
 	dvc init
+	git add .
 	git commit -m "initialise dvc tracking"
 	git push
 
