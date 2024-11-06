@@ -49,6 +49,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+    # To intialise dvc tracking if and only if it ahs not been set up for
+    # the first-time already
+      - name: First-time initialise DVC
+        run: |
+          test -d ".dvc" && make setup_dvc
+
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
       - name: Pull from DVC
         run: dvc pull --allow-missing data/train.csv data/test.csv
