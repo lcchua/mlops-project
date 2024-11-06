@@ -11,6 +11,8 @@ on:
   #    - 'steps/*.py'
   #    - 'requirements.txt'
   workflow_dispatch:
+permissions:
+  contents: write
 
 env:
   ML_ARTEFACTS_S3: s3://ce7-grp-1-proj/DVC_artefacts/
