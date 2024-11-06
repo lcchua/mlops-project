@@ -91,30 +91,16 @@ jobs:
 
       - name: Version ML and Git artefacts
         run: |
-          dvc add data/train.csv
-          dvc add data/test.csv
-          git add data/train.csv.dvc data/.gitignore
-          git add data/test.csv.dvc data/.gitignore
-          git commit -m "update training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
-          git push
-          dvc add models/model.pkl
-          git add models/model.pkl.dvc models/.gitignore
-          git commit -m "update trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
-          git push
-          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }}
-          echo "CP1"
-          dvc push
-          echo "CP2"
-          git add .dvc
-          echo CP3"
-          git commit -m "update dvc configurations"
-          echo "CP4"
-          git push origin main
-          echo "CP5"
-
-#      - name: Clean up the training environment
-#        run: make clean
-#-------------------------------------------------------------------------
-# Keep in storage:
-# a) dvc remote modify --local remote credentialpath ~/.aws/credentials
-#-------------------------------------------------------------------------
+          dvc add data/train.csv && echo "CP1"
+          dvc add data/test.csv && echo "CP2"
+          git add data/train.csv.dvc data/.gitignore && echo "CP3"
+          git add data/test.csv.dvc data/.gitignore && echo "CP4"
+          git commit -m "update training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP5"
+          dvc add models/model.pkl && echo "CP6"
+          git add models/model.pkl.dvc models/.gitignore && echo "CP7"
+          git commit -m "update trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
+          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
+          dvc push && echo "CP10"
+          git add .dvc && echo CP11"
+          git commit -m "update dvc configurations" && echo "CP12"
+          git push origin main && echo "CP13"
