@@ -97,12 +97,10 @@ jobs:
           git add models/model.pkl.dvc models/.gitignore
           git commit -m "update trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
           dvc remote add -d remote ${{ env.ML_ARTEFACTS_S3 }}
-          git commit .dvc/config -m "configure dvc remote storage"
           dvc push
-          git push origin main
           git add .
-          git commit -m "update .dvc to Git repo"
-          git push
+          git commit .dvc -m "update dvc config - dvc remote storage and others"
+          git push origin main
 
 #      - name: Clean up the training environment
 #        run: make clean
