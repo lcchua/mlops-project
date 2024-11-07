@@ -7,6 +7,10 @@ train:
   random_state: 42
   shuffle: true
 
+#**
+# Switch the ML algorithm as accordingly then update/create the appropriate release/tag in Git
+#**
+
 model:
   #name: DecisionTreeClassifier
   #params:
