@@ -1,5 +1,6 @@
 # Train the ML Model for the first time or whenever
 # there is code refactoring but no data changes.
+
 name: ML Model Training
 
 on:
@@ -17,6 +18,8 @@ permissions:
 env:
   ML_ARTEFACTS_S3: s3://ce7-grp-1-proj/DVC_artefacts/
   ML_NEW_DATA_S3: s3://ce7-grp-1-proj/new_ML_data/
+  GIT_USERNAME: lcchua
+  GIT_USEREMAIL: laichwang@gmail.com
 
 jobs:
   Train:
@@ -52,8 +55,8 @@ jobs:
       
       - name: Configure Git
         run: |
-          git config --global user.name "lcchua"
-          git config --global user.email "laichwang@gmail.com"
+          git config --global user.name ${{ env.GIT_USERNAME }}
+          git config --global user.email ${{ env.GIT_USEREMAIL }}
 
     # To intialise dvc tracking if and only if it has not been set up for
     # the first-time already
@@ -62,7 +65,7 @@ jobs:
           if ! test -d .dvc; then
             dvc init
             git add .
-            git commit -m "initialise dvc trcaking"
+            git commit -m "initialise dvc tracking"
             git push
           fi
 

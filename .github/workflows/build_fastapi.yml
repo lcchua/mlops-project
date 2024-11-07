@@ -12,14 +12,14 @@ on:
   #    - 'dockerfile'
   #    - 'requirements.txt'
   #workflow_run:
-  #  workflows: ["Train ML Model"]
+  #  workflows: ["ML Model Training"]
   #  types: [completed]
   workflow_dispatch:
 
 jobs:
   Build:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
-    name: Build & Push
+    name: Build and Push
     #if: github.event.pull_request.merged
     runs-on: ubuntu-latest
     environment: development
