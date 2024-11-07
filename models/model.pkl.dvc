@@ -1,5 +1,10 @@
 outs:
+<<<<<<< HEAD
 - md5: 6d4be333776dfc727bf9a634fe28e3df
   size: 6074155
+=======
+- md5: 4869c83d06a62f4736b148f8e2517e9e
+  size: 7467844
+>>>>>>> parent of 94670da (update trained model v1.0.0-GBC)
   hash: md5
   path: model.pkl
