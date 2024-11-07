@@ -30,7 +30,9 @@ cleanup:
 	rm -rf .pytest_cache
 	rm -rf tests/__pycache__
 	rm -f data/*.csv
+	rm -f data/*.csv.dvc
 	rm -f models/model.pkl
+	rm -f models/*.pkl.dvc
 
 remove:
 	rm -rf venv
