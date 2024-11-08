@@ -1,0 +1,24 @@
+name: Checkov
+
+on:
+  #pull_request:
+  #  branches: [ "main" ]
+  #  paths:
+  #    - 'terraform/*'
+  workflow_dispatch:
+
+jobs:
+  Checkov:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Checkov
+      uses: bridgecrewio/checkov-action@master
+      with:
+        framework: terraform

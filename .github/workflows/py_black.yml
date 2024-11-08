@@ -1,0 +1,23 @@
+# Run Python code formatter using Black
+name: Black Fromatter
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #pull_request:
+  workflow_dispatch:
+
+jobs:
+  black-formatting:
+    name: Black formatter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Black
+        uses: psf/black@stable
+        with:
+          options: "--check --verbose"
