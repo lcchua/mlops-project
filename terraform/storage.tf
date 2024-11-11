@@ -114,7 +114,7 @@ resource "aws_s3_bucket" "logging_bucket" {
   bucket = "${aws_s3_bucket.this.id}-logging-bucket"
 }
 output "logging_bucket" {
-  description = "dev stw loggin S3 bucket"
+  description = "dev stw logging S3 bucket"
   value       = aws_s3_bucket.logging_bucket.id
 }
 
@@ -134,7 +134,7 @@ resource "aws_s3_bucket_logging" "this_logging" {
 
 # Fix CKV_AWS_145
 resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_2" {
-  bucket = aws_s3_bucket_logging.this_logging.bucket
+  bucket = aws_s3_bucket.logging_bucket.bucket
 
   rule {
     apply_server_side_encryption_by_default {
