@@ -1,4 +1,5 @@
 # Run Python code linter using Flake8
+#   - check tox.ini config for the flake8 init parameters
 name: Flake8 Lint
 
 on:
