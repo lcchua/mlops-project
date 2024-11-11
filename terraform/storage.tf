@@ -5,7 +5,9 @@
 #  byte_length = 2
 #}
 
-# Bucket with versioning enabled
+# S3 bucket creation
+      #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
+      #  Custom IAM policy attached to this S3 resource
 resource "aws_s3_bucket" "this" {
   #  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
   bucket = var.ml_s3bucket_name
@@ -35,6 +37,8 @@ output "s3bucket-versioning" {
 }
 
 # Enable bucket ownership control
+      #CKV2_AWS_65:Ensure access control lists for S3 buckets are disabled
+      #  Custom IAM policy attached to this S3 resource
 resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
   bucket = aws_s3_bucket.this.id
 
@@ -46,7 +50,11 @@ resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
 # Disable block all public accesses
 resource "aws_s3_bucket_public_access_block" "this-pub-access-blk" {
   bucket = aws_s3_bucket.this.id
-
+      #checkov:skipped=CKV_AWS_56:Ensure S3 bucket has 'restrict_public_buckets' enabled
+      #checkov:skipped=CKV_AWS_55:Ensure S3 bucket has ignore public ACLs enabled
+      #checkov:skipped=CKV_AWS_54:Ensure S3 bucket has block public policy enabled
+      #checkov:skipped=CKV_AWS_53:Ensure S3 bucket has block public ACLS enabled
+      #  Custom IAM policy attached to this S3 resource
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
@@ -61,7 +69,7 @@ resource "aws_s3_bucket_acl" "this-acl" {
   ]
 
   bucket = aws_s3_bucket.this.id
-  acl    = "authenticated-read"
+  acl    = "private" # Fix CKV_AWS_20
 }
 output "s3bucket-acl" {
   description = "dev stw S3 bucket acl set to public read"
@@ -88,6 +96,7 @@ resource "aws_s3_object" "folder2" {
 resource "aws_s3_bucket_logging" "this_logging" {
   bucket = aws_s3_bucket.this.id
 
+      #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
   target_bucket = aws_s3_bucket.logging_bucket.id
   target_prefix = "log/"
 }

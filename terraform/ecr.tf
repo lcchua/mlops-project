@@ -1,8 +1,14 @@
 # Creation of Private ECR repo
 resource "aws_ecr_repository" "this" {
   name                 = var.ecr_repo_appname
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = "IMMUTABLE" # Fix CKV_AWS_51
   force_delete         = true
+
+  encryption_configuration {
+    encryption_type = "KMS" # Fix CKV_AWS_136
+    # Without defining "kms_key" so use the default
+    # AWS-managed encryption key (aws/ecr) instead.
+  }
 
   image_scanning_configuration {
     scan_on_push = true
