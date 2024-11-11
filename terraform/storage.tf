@@ -7,10 +7,10 @@
 
 # S3 bucket creation
 resource "aws_s3_bucket" "this" {
-      #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
-      #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
-      #  Custom IAM policy attached to this S3 resource
-  
+  #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
+  #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
+  #  Custom IAM policy attached to this S3 resource
+
   #  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
   bucket = var.ml_s3bucket_name
 
@@ -31,7 +31,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_1" {
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm     = "aws:kms"
+      sse_algorithm = "aws:kms"
     }
   }
 }
@@ -50,8 +50,8 @@ output "s3bucket-versioning" {
 }
 
 # Enable bucket ownership control
-      #CKV2_AWS_65:Ensure access control lists for S3 buckets are disabled
-      #  Custom IAM policy attached to this S3 resource
+#CKV2_AWS_65:Ensure access control lists for S3 buckets are disabled
+#  Custom IAM policy attached to this S3 resource
 resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
   bucket = aws_s3_bucket.this.id
 
@@ -62,11 +62,11 @@ resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
 
 # Disable block all public accesses
 resource "aws_s3_bucket_public_access_block" "this-pub-access-blk" {
-      #checkov:skipped=CKV_AWS_56:Ensure S3 bucket has 'restrict_public_buckets' enabled
-      #checkov:skipped=CKV_AWS_55:Ensure S3 bucket has ignore public ACLs enabled
-      #checkov:skipped=CKV_AWS_54:Ensure S3 bucket has block public policy enabled
-      #checkov:skipped=CKV_AWS_53:Ensure S3 bucket has block public ACLS enabled
-      #  Custom IAM policy attached to this S3 resource
+  #checkov:skipped=CKV_AWS_56:Ensure S3 bucket has 'restrict_public_buckets' enabled
+  #checkov:skipped=CKV_AWS_55:Ensure S3 bucket has ignore public ACLs enabled
+  #checkov:skipped=CKV_AWS_54:Ensure S3 bucket has block public policy enabled
+  #checkov:skipped=CKV_AWS_53:Ensure S3 bucket has block public ACLS enabled
+  #  Custom IAM policy attached to this S3 resource
   bucket = aws_s3_bucket.this.id
 
   block_public_acls       = false
@@ -108,8 +108,8 @@ resource "aws_s3_object" "folder2" {
 
 # Configure the S3 bucket logging
 #   https://kodekloud.com/blog/how-to-create-aws-s3-bucket-using-terraform/ 
-      #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
-      #checkov:skipped=CKV2_AWS_6:Ensure that S3 bucket has a Public Access block
+#checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
+#checkov:skipped=CKV2_AWS_6:Ensure that S3 bucket has a Public Access block
 resource "aws_s3_bucket" "logging_bucket" {
   bucket = "${aws_s3_bucket.this.id}-logging-bucket"
 }
@@ -118,16 +118,16 @@ output "logging_bucket" {
   value       = aws_s3_bucket.logging_bucket.id
 }
 
-resource "aws_s3_buck_acl" "log_bucket_acl" {
-  bucket= aws_s3_bucket.logging_bucket.id
-  acl = "log-delivery-write"
+resource "aws_s3_bucket_acl" "log_bucket_acl" {
+  bucket = aws_s3_bucket.logging_bucket.id
+  acl    = "log-delivery-write"
 }
 
 # Enable bucket access logging and creation of a specific "logging bucket"
 resource "aws_s3_bucket_logging" "this_logging" {
   bucket = aws_s3_bucket.this.id
 
-      #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
+  #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
   target_bucket = aws_s3_bucket.logging_bucket.id
   target_prefix = "log/"
 }
@@ -138,7 +138,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_2" {
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm     = "aws:kms"
+      sse_algorithm = "aws:kms"
     }
   }
 }
