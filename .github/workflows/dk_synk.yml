@@ -1,0 +1,29 @@
+name: Snyk Docker Image Scan
+
+on:
+  #pull_request:
+  #  branches: [ "main" ]
+  #  paths:
+  #      - '*.py'
+  #      - '**/*.py'
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run Snyk to check Docker image for vulnerabilities
+      uses: snyk/actions/docker@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: your/image-to-tes
+        args:
+          --severity-threshold=high
+          --file=dockerfile
+      #continue-on-error: true
+
+    - name: Upload result to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: snyk.sarif
