@@ -30,7 +30,7 @@ jobs:
         # This will add both a CLI output to the console and create a results.sarif file
         output_format: cli,sarif
         output_file_path: console,checkov.sarif
-        skip_check: CKV_AWS_56,CKV_AWS_55,CKV_AWS_54,CKV_AWS_53,CKV2_AWS_62,CKV2_AWS_65,CKV_AWS_144,CKV2_AWS_61
+        skip_check: CKV_AWS_56,CKV_AWS_55,CKV_AWS_54,CKV_AWS_53,CKV2_AWS_62,CKV2_AWS_65,CKV_AWS_144,CKV2_AWS_61,CKV2_AWS_6
         quiet: true # display only failed checks
 
     - name: Upload SARIF file

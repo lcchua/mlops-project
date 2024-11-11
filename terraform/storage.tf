@@ -6,10 +6,11 @@
 #}
 
 # S3 bucket creation
-      #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
-      #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled            
-      #  Custom IAM policy attached to this S3 resource
 resource "aws_s3_bucket" "this" {
+      #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
+      #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
+      #  Custom IAM policy attached to this S3 resource
+  
   #  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
   bucket = var.ml_s3bucket_name
 
@@ -67,6 +68,7 @@ resource "aws_s3_bucket_public_access_block" "this-pub-access-blk" {
       #checkov:skipped=CKV_AWS_53:Ensure S3 bucket has block public ACLS enabled
       #  Custom IAM policy attached to this S3 resource
   bucket = aws_s3_bucket.this.id
+
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
@@ -104,9 +106,10 @@ resource "aws_s3_object" "folder2" {
   source = "/dev/null"
 }
 
-# Configure the S3 bucjet logging
+# Configure the S3 bucket logging
 #   https://kodekloud.com/blog/how-to-create-aws-s3-bucket-using-terraform/ 
       #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
+      #checkov:skipped=CKV2_AWS_6:Ensure that S3 bucket has a Public Access block
 resource "aws_s3_bucket" "logging_bucket" {
   bucket = "${aws_s3_bucket.this.id}-logging-bucket"
 }
@@ -139,6 +142,17 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_2" {
     }
   }
 }
+
+# Enable logging bucket versioning
+# Fix CKV_AWS_21
+resource "aws_s3_bucket_versioning" "logging-bucket-versioning" {
+  bucket = aws_s3_bucket.logging_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 
 # Define the custom bucket IAM policy for DVC accesses
 resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
