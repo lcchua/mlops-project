@@ -56,7 +56,7 @@ resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
   bucket = aws_s3_bucket.this.id
 
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
@@ -104,61 +104,6 @@ resource "aws_s3_object" "folder2" {
   key    = "${var.DVC_s3bucket_folder_name}/"
   acl    = "private"
   source = "/dev/null"
-}
-
-# Configure the S3 bucket logging
-#   https://kodekloud.com/blog/how-to-create-aws-s3-bucket-using-terraform/ 
-#checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
-#checkov:skipped=CKV2_AWS_6:Ensure that S3 bucket has a Public Access block
-resource "aws_s3_bucket" "logging_bucket" {
-  bucket = "${aws_s3_bucket.this.id}-logging-bucket"
-}
-output "logging_bucket" {
-  description = "dev stw logging S3 bucket"
-  value       = aws_s3_bucket.logging_bucket.id
-}
-
-resource "aws_s3_bucket_ownership_controls" "logging_bucket-owner-ctl" {
-  bucket = aws_s3_bucket.logging_bucket.id
-
-  rule {
-    object_ownership = "BucketOwnerEnforced"
-  }
-}
-
-resource "aws_s3_bucket_acl" "log_bucket_acl" {
-  bucket = aws_s3_bucket.logging_bucket.id
-  acl    = "log-delivery-write"
-}
-
-# Enable bucket access logging and creation of a specific "logging bucket"
-resource "aws_s3_bucket_logging" "this_logging" {
-  bucket = aws_s3_bucket.this.id
-
-  #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
-  target_bucket = aws_s3_bucket.logging_bucket.id
-  target_prefix = "log/"
-}
-
-# Fix CKV_AWS_145
-resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_2" {
-  bucket = aws_s3_bucket.logging_bucket.bucket
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "aws:kms"
-    }
-  }
-}
-
-# Enable logging bucket versioning
-# Fix CKV_AWS_21
-resource "aws_s3_bucket_versioning" "logging-bucket-versioning" {
-  bucket = aws_s3_bucket.logging_bucket.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
 }
 
 
