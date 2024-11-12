@@ -118,6 +118,14 @@ output "logging_bucket" {
   value       = aws_s3_bucket.logging_bucket.id
 }
 
+resource "aws_s3_bucket_ownership_controls" "logging_bucket-owner-ctl" {
+  bucket = aws_s3_bucket.logging_bucket.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
 resource "aws_s3_bucket_acl" "log_bucket_acl" {
   bucket = aws_s3_bucket.logging_bucket.id
   acl    = "log-delivery-write"
