@@ -106,7 +106,6 @@ resource "aws_s3_object" "folder2" {
   source = "/dev/null"
 }
 
-
 # Define the custom bucket IAM policy for DVC accesses
 resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
   bucket = aws_s3_bucket.this.id
@@ -137,4 +136,21 @@ data "aws_iam_policy_document" "allow_access_from_another_account" {
       "${aws_s3_bucket.this.arn}/*"
     ]
   }
+}
+
+# Enable access logging for ML project S3 bucket
+resource "aws_s3_bucket" "log_bucket" {
+  bucket = var.logging_s3bucket_name
+}
+
+resource "aws_s3_bucket_acl" "log_bucket_acl" {
+  bucket = aws_s3_bucket.log_bucket.id
+  acl    = "log-delivery-write"
+}
+
+resource "aws_s3_bucket_logging" "target" {
+  bucket = aws_s3_bucket.this.id
+
+  target_bucket = aws_s3_bucket.log_bucket.id
+  target_prefix = "log/"
 }
