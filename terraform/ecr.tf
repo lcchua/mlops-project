@@ -1,6 +1,8 @@
+# https://towardsaws.com/create-multiple-aws-ecr-repositories-using-terraform-f291ee2e15f3 
+
 # Creation of Private ECR repo
 resource "aws_ecr_repository" "this" {
-  name                 = var.ecr_repo_appname
+  name                 = var.ecr_prod_repo_appname
   image_tag_mutability = "IMMUTABLE" # Fix CKV_AWS_51
   force_delete         = true
 
