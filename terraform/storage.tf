@@ -49,6 +49,21 @@ output "s3bucket-versioning" {
   value       = aws_s3_bucket_versioning.this-bucket-versioning.versioning_configuration
 }
 
+# Set up bucket canned ACL for AthenticatedUsersGrp read
+resource "aws_s3_bucket_acl" "this-acl" {
+  depends_on = [
+    aws_s3_bucket_ownership_controls.this-owner-ctl,
+    aws_s3_bucket_public_access_block.this-pub-access-blk
+  ]
+
+  bucket = aws_s3_bucket.this.id
+  acl    = "private" # Fix CKV_AWS_20
+}
+output "s3bucket-acl" {
+  description = "dev stw S3 bucket acl set to public read"
+  value       = aws_s3_bucket_acl.this-acl.id
+}
+
 # Enable bucket ownership control
 #CKV2_AWS_65:Ensure access control lists for S3 buckets are disabled
 #  Custom IAM policy attached to this S3 resource
@@ -56,7 +71,7 @@ resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
   bucket = aws_s3_bucket.this.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "ObjectWriter"
   }
 }
 
@@ -73,21 +88,6 @@ resource "aws_s3_bucket_public_access_block" "this-pub-access-blk" {
   block_public_policy     = false
   ignore_public_acls      = false
   restrict_public_buckets = false
-}
-
-# Set up bucket canned ACL for AthenticatedUsersGrp read
-resource "aws_s3_bucket_acl" "this-acl" {
-  depends_on = [
-    aws_s3_bucket_ownership_controls.this-owner-ctl,
-    aws_s3_bucket_public_access_block.this-pub-access-blk
-  ]
-
-  bucket = aws_s3_bucket.this.id
-  acl    = "private" # Fix CKV_AWS_20
-}
-output "s3bucket-acl" {
-  description = "dev stw S3 bucket acl set to public read"
-  value       = aws_s3_bucket_acl.this-acl.id
 }
 
 # Create a bucket folder for new ML datasets
