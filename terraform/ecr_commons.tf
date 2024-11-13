@@ -1,9 +1,9 @@
 # Comment this if it is for single ecr repo
 locals {
   project_family = "ce7-grp-1"
-  name           = "predict_buy_app"
+  appname           = "predict_buy_app"
   repositories = {
-    "prod" = {
+    "repo1" = {
       image_tag_mutability  = "IMMUTABLE"
       scan_on_push          = true
       force_delete          = true
@@ -18,7 +18,7 @@ locals {
       }
     }
 
-    "nonprod" = {
+    "repo2" = {
       image_tag_mutability  = "IMMUTABLE"
       scan_on_push          = true
       force_delete          = true
@@ -27,7 +27,7 @@ locals {
       environment           = "nonprod"
       tags = {
         Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
-        Owner       = "ace7-grp-1"
+        Owner       = "ce7-grp-1"
         Purpose     = "ECR private repo creation for nonprod env"
         Description = "Predict insurance-buy docker image"
       }
@@ -61,7 +61,7 @@ module "ecr" {
   source   = "./modules/ecr"
   for_each = local.repositories
 
-  name                  = local.name
+  name                  = local.appname
   project_family        = local.project_family
   environment           = each.value.environment
   image_tag_mutability  = each.value.image_tag_mutability
