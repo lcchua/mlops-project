@@ -111,6 +111,6 @@ jobs:
           git push origin main && echo "CP12"
 
   call-workflow:
-    uses: lcchua/mlops-project/.github/workflows/build_fastapi.yml@main
+    uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}

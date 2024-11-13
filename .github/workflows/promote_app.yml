@@ -1,0 +1,44 @@
+# To promote the latest app image tested in nonprod env 
+# to the prod env in the common registry
+
+name: Promote Tested App Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  App-Promotion:
+    name: Docker Image Pull and Push
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Pull Docker Image from Source Repo
+        run: |
+          SRC_ECR_REG=${{ steps.login-ecr.outputs.registry }}
+          SRC_ECR_REPO=${{ vars.NONPROD_IMAGE_NAME }}
+          docker pull $SRC_ECR_REG/$SRC_ECR_REPO:latest
+
+      - name: Tag and Push Docker Image to Destination Repo
+        run: |
+          DST_ECR_REG=${{ steps.login-ecr.outputs.registry }}
+          DST_ECR_REPO=${{ vars.PROD_IMAGE_NAME }}
+          docker tag $SRC_ECR_REG/$SRC_ECR_REPO:latest $DST_ECR_REPO/$DST_ECR_REPO:latest
+          docker push $DST_ECR_REPO/$DST_ECR_REPO:latest
