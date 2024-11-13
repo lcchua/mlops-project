@@ -8,14 +8,14 @@ locals {
       scan_on_push          = true
       force_delete          = true
       encryption_type       = "KMS"
-      expiration_after_days = 7
+      expiration_after_days = 30
       environment           = "prod"
-#      tags = {
-#        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
-#        Owner       = "ce7-grp-1"
-#        Purpose     = "ECR private repo creation for prod env"
-#        Description = "Predict insurance-buy docker image"
-#      }
+      #      tags = {
+      #        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
+      #        Owner       = "ce7-grp-1"
+      #        Purpose     = "ECR private repo creation for prod env"
+      #        Description = "Predict insurance-buy docker image"
+      #      }
     }
 
     "repo2" = {
@@ -23,14 +23,14 @@ locals {
       scan_on_push          = true
       force_delete          = true
       encryption_type       = "KMS"
-      expiration_after_days = 3
+      expiration_after_days = 15
       environment           = "nonprod"
-#      tags = {
-#        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
-#        Owner       = "ce7-grp-1"
-#        Purpose     = "ECR private repo creation for nonprod env"
-#        Description = "Predict insurance-buy docker image"
-#      }
+      #      tags = {
+      #        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
+      #        Owner       = "ce7-grp-1"
+      #        Purpose     = "ECR private repo creation for nonprod env"
+      #        Description = "Predict insurance-buy docker image"
+      #      }
     }
   }
 }
@@ -69,6 +69,6 @@ module "ecr" {
   force_delete          = each.value.force_delete
   encryption_type       = each.value.encryption_type
   expiration_after_days = each.value.expiration_after_days
-#  additional_tags       = each.value.tags
+  #  additional_tags       = each.value.tags
 
 }
