@@ -4,9 +4,9 @@
 name: Promote Tested App Image
 
 on:
-  push:
-    branches:
-      - main
+  #push:
+  #  branches:
+  #    - main
   workflow_dispatch:
 
 jobs:
