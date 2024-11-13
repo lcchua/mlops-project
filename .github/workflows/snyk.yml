@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  security:
+  code-scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -21,4 +21,16 @@ jobs:
         run: snyk code test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          
+  
+  terraform-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Run Snyk Terraform Scan And Check Snyk Scan Results
+        run: snyk iac test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
