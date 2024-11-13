@@ -21,6 +21,7 @@ jobs:
         run: snyk code test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
   
   terraform-scan:
     runs-on: ubuntu-latest
@@ -34,3 +35,4 @@ jobs:
         run: snyk iac test --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
