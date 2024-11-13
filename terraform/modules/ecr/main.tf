@@ -1,27 +1,29 @@
-# https://towardsaws.com/create-multiple-aws-ecr-repositories-using-terraform-f291ee2e15f3 
-
-# Creation of Private ECR repo
 resource "aws_ecr_repository" "this" {
-  name                 = var.ecr_prod_repo_appname
-  image_tag_mutability = "IMMUTABLE" # Fix CKV_AWS_51
-  force_delete         = true
+  name                 = "${var.project_family}/${var.environment}/${var.name}"
+  image_tag_mutability = var.image_tag_mutability # Fix CKV_AWS_51
+  force_delete = var.force_delete
 
   encryption_configuration {
-    encryption_type = "KMS" # Fix CKV_AWS_136
+    encryption_type = var.encryption_type # Fix CKV_AWS_136
     # Without defining "kms_key" so use the default
     # AWS-managed encryption key (aws/ecr) instead.
   }
 
   image_scanning_configuration {
-    scan_on_push = true
+    scan_on_push = var.scan_on_push
   }
-}
-output "ecr_repo_app_url" {
-  description = "dev stw ECR private repo app_image"
-  value       = aws_ecr_repository.this.repository_url
+
+  tags = merge(
+    var.additional_tags,
+    {
+      ManagedBy = "Terraform"
+      Environment = "${var.environment}"
+    }
+  )
 }
 
 resource "aws_ecr_lifecycle_policy" "this_lifecycle_policy" {
+  count = var.expiration_after_days > 0 ? 1 : 0
   repository = aws_ecr_repository.this.name
 
   # count_type:
@@ -31,25 +33,26 @@ resource "aws_ecr_lifecycle_policy" "this_lifecycle_policy" {
   policy = <<EOF
   {
     "rules": [
-      {
-        "rulePriority": 1,
-        "description": "Keep last 5 images",
-        "selection": {
-          "tagStatus": "tagged",
-          "tagPrefixList": ["v"],
-          "countType": "imageCountMoreThan",
-          "countNumber": 10
-        },
-        "action": {
-          "type": "expire"
+        {
+            "rulePriority": 1,
+            "description": "Expire images older than ${var.expiration_after_days} days",
+            "selection": {
+                "tagStatus": "tagged",
+                "tagPrefixList": ["v"],
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": ${var.expiration_after_days}
+            },
+            "action": {
+                "type": "expire"
+            }
         }
-      }
     ]
   }
   EOF
 }
 
-resource "aws_ecr_repository_policy" "this_ecr_repo_policy" {
+resource "aws_ecr_repository_policy" "this_repo_policy" {
   repository = aws_ecr_repository.this.name
 
   policy = <<EOF

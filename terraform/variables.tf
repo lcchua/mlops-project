@@ -29,7 +29,8 @@ variable "DVC_s3bucket_folder_name" {
   default     = "DVC_artefacts"
 }
 
-variable "ecr_nonprod_repo_appname" {
+# This it now moved the ECR terraform module so to be removed from here.
+/* variable "ecr_nonprod_repo_appname" {
   description = "Namespace/name of application in ECR public repo"
   type        = string
   default     = "ce7-grp-1-nonprod/predict-buy-app"
@@ -39,4 +40,4 @@ variable "ecr_prod_repo_appname" {
   description = "Namespace/name of application in ECR public repo"
   type        = string
   default     = "ce7-grp-1-prod/predict-buy-app"
-}
+} */
