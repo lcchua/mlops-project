@@ -62,8 +62,14 @@ jobs:
         run: |
           pip install dvc[s3]
 
+      # Only pull from DVC the last-commited ML model if 
+      # there is no model already exisiting locally in the event
+      # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
-        run: dvc pull models/model.pkl
+        run: |
+          if [[ -f "models/model.pkl.dvc" || -f "models/model.pkl" ]]; then 
+            dvc pull models/model.pkl
+          fi
 
       - name: Login to Amazon ECR
         id: login-ecr
