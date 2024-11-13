@@ -1,6 +1,7 @@
 # Comment this if it is for single ecr repo
 locals {
   project_family = "ce7-grp-1"
+  name           = "predict_buy_app"
   repositories = {
     "prod" = {
       image_tag_mutability  = "IMMUTABLE"
@@ -60,7 +61,7 @@ module "ecr" {
   source   = "./modules/ecr"
   for_each = local.repositories
 
-  name                  = each.key
+  name                  = local.name
   project_family        = local.project_family
   environment           = each.value.environment
   image_tag_mutability  = each.value.image_tag_mutability
