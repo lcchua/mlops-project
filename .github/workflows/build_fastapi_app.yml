@@ -69,6 +69,8 @@ jobs:
         run: |
           if [[ -f "models/model.pkl.dvc" || -f "models/model.pkl" ]]; then 
             dvc pull models/model.pkl
+          else
+            echo "A Ml Model is already existing in the 'models' directory!"
           fi
 
       - name: Login to Amazon ECR
