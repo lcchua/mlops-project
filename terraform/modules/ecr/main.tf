@@ -13,7 +13,7 @@ resource "aws_ecr_repository" "this" {
     scan_on_push = var.scan_on_push
   }
 
-  tags = var.additional_tags
+#  tags = var.additional_tags
 /*   tags = merge(
     var.additional_tags,
     {

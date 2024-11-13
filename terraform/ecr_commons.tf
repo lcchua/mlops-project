@@ -1,7 +1,7 @@
 # Comment this if it is for single ecr repo
 locals {
   project_family = "ce7-grp-1"
-  appname           = "predict_buy_app"
+  appname        = "predict_buy_app"
   repositories = {
     "repo1" = {
       image_tag_mutability  = "IMMUTABLE"
@@ -10,11 +10,11 @@ locals {
       encryption_type       = "KMS"
       expiration_after_days = 7
       environment           = "prod"
-      tags = {
-        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
-        Owner       = "ce7-grp-1"
-        Purpose     = "ECR private repo creation for prod env"
-        Description = "Predict insurance-buy docker image"
+#      tags = {
+#        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
+#        Owner       = "ce7-grp-1"
+#        Purpose     = "ECR private repo creation for prod env"
+#        Description = "Predict insurance-buy docker image"
       }
     }
 
@@ -25,11 +25,11 @@ locals {
       encryption_type       = "KMS"
       expiration_after_days = 3
       environment           = "nonprod"
-      tags = {
-        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
-        Owner       = "ce7-grp-1"
-        Purpose     = "ECR private repo creation for nonprod env"
-        Description = "Predict insurance-buy docker image"
+#      tags = {
+#        Project     = "CapstoneProj-SRE,DevOps,DevSecOps"
+#        Owner       = "ce7-grp-1"
+#        Purpose     = "ECR private repo creation for nonprod env"
+#        Description = "Predict insurance-buy docker image"
       }
     }
   }
@@ -69,6 +69,6 @@ module "ecr" {
   force_delete          = each.value.force_delete
   encryption_type       = each.value.encryption_type
   expiration_after_days = each.value.expiration_after_days
-  additional_tags       = each.value.tags
+#  additional_tags       = each.value.tags
 
 }

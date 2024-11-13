@@ -37,11 +37,11 @@ variable "encryption_type" {
   description = "(Optional) Indicates the type of encryption applied to the ecr repo."
 }
 
-variable "additional_tags" {
+/* variable "additional_tags" {
   type = map(string)
   description = "(Optional) A map of tags to assign to the resource."
   default = {}
-}
+} */
 
 
 variable "expiration_after_days" {
