@@ -15,7 +15,7 @@ locals {
 #        Owner       = "ce7-grp-1"
 #        Purpose     = "ECR private repo creation for prod env"
 #        Description = "Predict insurance-buy docker image"
-      }
+#      }
     }
 
     "repo2" = {
