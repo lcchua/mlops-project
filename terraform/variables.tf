@@ -14,7 +14,7 @@ variable "region" {
 variable "ml_s3bucket_name" {
   description = "Name of S3 bucket for ML artefacts and datasets"
   type        = string
-  default     = "ce7-grp-1-proj-bucket"
+  default     = "ce7-grp-1-bucket"
 }
 
 variable "MLdata_s3bucket_folder_name" {
@@ -29,15 +29,3 @@ variable "DVC_s3bucket_folder_name" {
   default     = "DVC_artefacts"
 }
 
-# This it now moved the ECR terraform module so to be removed from here.
-/* variable "ecr_nonprod_repo_appname" {
-  description = "Namespace/name of application in ECR public repo"
-  type        = string
-  default     = "ce7-grp-1-nonprod/predict-buy-app"
-}
-
-variable "ecr_prod_repo_appname" {
-  description = "Namespace/name of application in ECR public repo"
-  type        = string
-  default     = "ce7-grp-1-prod/predict-buy-app"
-} */

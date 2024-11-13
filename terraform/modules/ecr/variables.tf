@@ -10,8 +10,7 @@ variable "project_family" {
 
 variable "environment" {
   type = string
-  description = "(Optional) Repository environment. {project_family}/{environment}/{name}. Default is nonprod."
-  default = "nonprod"
+  description = "(Optional) Repository environment. {project_family}/{environment}/{name}."
 }
 
 variable "image_tag_mutability" {
