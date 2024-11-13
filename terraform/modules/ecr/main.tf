@@ -13,13 +13,14 @@ resource "aws_ecr_repository" "this" {
     scan_on_push = var.scan_on_push
   }
 
-  tags = merge(
+  tags = var.additional_tags
+/*   tags = merge(
     var.additional_tags,
     {
       ManagedBy = "Terraform"
       Environment = "${var.environment}"
     }
-  )
+  ) */
 }
 
 resource "aws_ecr_lifecycle_policy" "this_lifecycle_policy" {
