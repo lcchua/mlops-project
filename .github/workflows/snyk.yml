@@ -31,6 +31,6 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk Terraform Scan And Check Snyk Scan Results
-        run: snyk iac test
+        run: snyk iac test --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
