@@ -111,6 +111,10 @@ jobs:
           git push origin main && echo "CP12"
 
   call-workflow:
+    needs: Train
+    if: ${{ needs.Train.result == 'success' }}
     uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
+    with:
+      skip_confirmation: 'true'
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}

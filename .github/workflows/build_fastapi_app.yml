@@ -14,8 +14,21 @@ on:
   #workflow_run:
   #  workflows: ["ML Model Training"]
   #  types: [completed]
-  #workflow_dispatch:
-  workflow_call:              
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Do you want to proceed? (y/n)"
+        required: true
+        default: n
+        type: choice
+        options:
+          - 'y'
+          - 'n'
+  workflow_call:
+    inputs:
+      skip_confirmation:
+        required: true
+        type: string              
     secrets:
       token:
         required: true
@@ -27,6 +40,7 @@ jobs:
     #if: github.event.pull_request.merged
     runs-on: ubuntu-latest
     environment: development
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
 
     steps:
       - name: Checkout code
