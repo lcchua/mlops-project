@@ -9,21 +9,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  security:
+  python-code-scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/python@master
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Run Snyk Code Scan And Check Snyk Scan Results
+        run: snyk code test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: 
-            --severity-threshold=high
-            --sarif-file-output=snyk.sarif
-          #command: monitor
-
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk.sarif
+        continue-on-error: true
+  
+  # terraform-scan:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@master
+  #    - name: Check out repository code
+  #      uses: actions/checkout@v3
+  #    - name: Install Snyk CLI
+  #      run: npm install -g snyk
+  #     - name: Run Snyk Terraform Scan And Check Snyk Scan Results
+  #       run: snyk iac test --report --severity-threshold=high # this covers high and critical
+  #       env:
+  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  #       continue-on-error: true
