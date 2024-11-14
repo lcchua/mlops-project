@@ -34,6 +34,11 @@ on:
         required: true
 
 jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+      
   Conditional-Build:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
     name: Build and Push
