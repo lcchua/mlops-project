@@ -104,9 +104,6 @@ jobs:
   terraform-wait:
     needs: terraform-create
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
     
     steps:
       - name: Pause 2min to verify lambda creation and test
