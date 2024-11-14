@@ -6,6 +6,7 @@ on:
   #  paths:
   #      - '*.py'
   #      - '**/*.py'
+  #      - 'terraform/**'
   workflow_dispatch:
 
 jobs:
@@ -23,7 +24,7 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk (Python) Code Scan
-        run: snyk code test
+        run: snyk code test --report --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
@@ -37,7 +38,7 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk Terraform Scan 
-        run: snyk iac test --report --scan=resource-changes --severity-threshold=high # this covers high and critical
+        run: snyk iac test --report --scan=resource-changes --severity-threshold=high 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
@@ -63,7 +64,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run Snyk Open-Source Code Scan
-        run: snyk test --severity-threshold=high # this covers high and critical
+        run: snyk test --report --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
@@ -73,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: terraform
 
     steps:
       - uses: actions/checkout@v2
@@ -105,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: terraform
     
     steps:
       - name: Pause 2min to verify lambda creation and test
@@ -116,7 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: terraform
     
     steps:
       - uses: actions/checkout@v2
