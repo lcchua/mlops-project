@@ -17,14 +17,12 @@ jobs:
   python-code-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk Code Scan And Check Snyk Scan Results
-        run: snyk code test
+        run: snyk code test --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
   
