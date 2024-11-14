@@ -24,7 +24,7 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk (Python) Code Scan
-        run: snyk code test --report --severity-threshold=high # this covers high and critical
+        run: snyk code test --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
@@ -38,7 +38,7 @@ jobs:
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk Terraform Scan 
-        run: snyk iac test --report --scan=resource-changes --severity-threshold=high 
+        run: snyk iac test --scan=resource-changes --severity-threshold=high 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
@@ -64,7 +64,7 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run Snyk Open-Source Code Scan
-        run: snyk test --report --severity-threshold=high # this covers high and critical
+        run: snyk test --severity-threshold=high # this covers high and critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
