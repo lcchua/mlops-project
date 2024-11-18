@@ -31,13 +31,12 @@ on:
         type: string
 
 jobs:
-  pre-action-step:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      
-  Conditional-Build:
+  #pre-deploy:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+
+  Build-and-Push:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
     name: Build and Push
     #if: github.event.pull_request.merged
@@ -46,6 +45,9 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
       - name: Install Python
         uses: actions/setup-python@v4
         with:
