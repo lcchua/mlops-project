@@ -34,10 +34,11 @@ on:
         required: true
 
 jobs:
-  pre-deploy:
+  pre-action-step:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+      - name: Checkout Code
+        uses: actions/checkout@v2
       
   Conditional-Build:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
@@ -48,9 +49,6 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Install Python
         uses: actions/setup-python@v4
         with:

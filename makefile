@@ -33,6 +33,7 @@ cleanup:
 	rm -f data/*.csv.dvc
 	rm -f models/model.pkl
 	rm -f models/*.pkl.dvc
+	aws s3 rm s3://ce7-grp-1-bucket/DVC_artefacts/files/ --recursive
 
 remove:
 	rm -rf venv
