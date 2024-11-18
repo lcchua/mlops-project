@@ -44,7 +44,7 @@ jobs:
           DST_ECR_REPO: ${{ vars.PROD_IMAGE_NAME }}
         run: |
           docker pull ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest
-          docker tag ${{ env.SRC_ECR_REPO }}:latest ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
+          docker tag ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
           docker push ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
           echo "REG_IMAGE_NAME=${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest" >> $GITHUB_OUTPUT         
 
