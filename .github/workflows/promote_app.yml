@@ -35,7 +35,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Pull Docker Image from Source Repo
+      - name: Pull latest Docker Image from Source Repo
         run: |
           SRC_ECR_REG=${{ steps.login-ecr.outputs.registry }}
           SRC_ECR_REPO=${{ vars.NONPROD_IMAGE_NAME }}
