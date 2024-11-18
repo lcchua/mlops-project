@@ -121,5 +121,5 @@ jobs:
     uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
     with:
       skip_confirmation: 'true'
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
+    #  token: ${{ secrets.GITHUB_TOKEN }}
