@@ -17,8 +17,8 @@ permissions:
   contents: write
 
 env:
-  ML_ARTEFACTS_S3: s3://ce7-grp-1-proj/DVC_artefacts/
-  ML_NEW_DATA_S3: s3://ce7-grp-1-proj/new_ML_data/
+  ML_ARTEFACTS_S3: s3://ce7-grp-1-bucket/DVC_artefacts/
+  ML_NEW_DATA_S3: s3://ce7-grp-1-bucket/new_ML_data/
   GIT_USERNAME: lcchua
   GIT_USEREMAIL: laichwang@gmail.com
 
