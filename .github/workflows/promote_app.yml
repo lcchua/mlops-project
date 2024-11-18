@@ -35,15 +35,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Pull latest Docker Image from Source Repo
+      - name: Pull and Push latest app image from nonprod to prod
+        id: pull-push-image
+        env:
+          SRC_ECR_REG: ${{ steps.login-ecr.outputs.registry }}
+          SRC_ECR_REPO: ${{ vars.NONPROD_IMAGE_NAME }}
+          DST_ECR_REG: ${{ steps.login-ecr.outputs.registry }}
+          DST_ECR_REPO: ${{ vars.PROD_IMAGE_NAME }}
         run: |
-          SRC_ECR_REG=${{ steps.login-ecr.outputs.registry }}
-          SRC_ECR_REPO=${{ vars.NONPROD_IMAGE_NAME }}
-          docker pull $SRC_ECR_REG/$SRC_ECR_REPO:latest
+          docker pull ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest
+          docker tag ${{ env.SRC_ECR_REPO }}:latest ${{ env.DST_ECR_REPO }}/${{ env.DST_ECR_REPO }}:latest
+          docker push ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
+          echo "REG_IMAGE_NAME=${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest" >> $GITHUB_OUTPUT         
 
-      - name: Tag and Push Docker Image to Destination Repo
-        run: |
-          DST_ECR_REG=${{ steps.login-ecr.outputs.registry }}
-          DST_ECR_REPO=${{ vars.PROD_IMAGE_NAME }}
-          docker tag $SRC_ECR_REG/$SRC_ECR_REPO:latest $DST_ECR_REPO/$DST_ECR_REPO:latest
-          docker push $DST_ECR_REPO/$DST_ECR_REPO:latest
+      - name: Display Image Name
+        run: echo "The built image name is ${{ steps.pull-push-image.outputs.REG_IMAGE_NAME }}"
