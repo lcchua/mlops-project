@@ -96,7 +96,7 @@ jobs:
           IMAGE_NAME: ${{ vars.NONPROD_IMAGE_NAME }}
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} -t ${{ env.IMAGE_NAME }}:latest .
-          docker tag ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}-${{ github.run_number }} ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}-${{ github.run_number }}
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}
           docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }} --all-tags
           echo "REG_IMAGE_NAME=${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
