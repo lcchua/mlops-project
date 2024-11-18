@@ -1,7 +1,7 @@
 # This workflow will build and push a new container image to Amazon ECR:
 #  - Previous docker push step: docker push ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
 
-name: Docker Build App Image
+name: Build Docker App Image
 
 on:
   #pull_request:
