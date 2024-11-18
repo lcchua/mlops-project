@@ -106,13 +106,13 @@ jobs:
           dvc add data/test.csv && echo "CP2"
           git add data/train.csv.dvc data/.gitignore && echo "CP3"
           git add data/test.csv.dvc data/.gitignore && echo "CP4"
-          git commit -m "update training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP5"
+          git commit -m "add tracking of new training and testing data ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP5"
           dvc add models/model.pkl && echo "CP6"
           git add models/model.pkl.dvc models/.gitignore && echo "CP7"
-          git commit -m "update trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
+          git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
           dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
           dvc push && echo "CP10"
-          git commit -a -m "update dvc configurations" && echo "CP11"
+          git commit -a -m "update new dvc configurations" && echo "CP11"
           git push origin main && echo "CP12"
 
   call-workflow:
