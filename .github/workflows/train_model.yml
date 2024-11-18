@@ -1,7 +1,7 @@
 # Train the ML Model for the first time or whenever
 # there is code refactoring but no data changes.
 
-name: ML Model Training
+name: Train ML Model
 
 on:
   #pull_request:
