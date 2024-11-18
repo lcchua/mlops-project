@@ -28,10 +28,7 @@ on:
     inputs:
       skip_confirmation:
         required: true
-        type: string              
-    secrets:
-      token:
-        required: true
+        type: string
 
 jobs:
   pre-action-step:

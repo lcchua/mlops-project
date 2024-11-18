@@ -122,4 +122,3 @@ jobs:
     with:
       skip_confirmation: 'true'
     secrets: inherit
-    #  token: ${{ secrets.GITHUB_TOKEN }}
