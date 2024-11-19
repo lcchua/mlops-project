@@ -69,10 +69,12 @@ jobs:
       # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
         run: |
-          if [[ -f "models/model.pkl.dvc" || -f "models/model.pkl" ]]; then 
-            dvc pull models/model.pkl
+          if [[ -f "models/model.pkl.dvc" && -f "models/model.pkl" ]]; then
+            echo "A Ml Model is already existing in the 'models' sub-directory!" 
+          elif [[ -f "models/model.pkl" ]]; then
+            echo "A Ml Model is already existing in the 'models' sub-directory!"
           else
-            echo "A Ml Model is already existing in the 'models' sib-directory!"
+            dvc pull models/model.pkl
           fi
 
       - name: Login to Amazon ECR
