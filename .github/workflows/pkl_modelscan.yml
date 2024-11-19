@@ -11,6 +11,20 @@ on:
   #      - '*.pkl.dvc'
   #      - 'models/*.pkl.dvc'
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Do you want to proceed? (y/n)"
+        required: true
+        default: n
+        type: choice
+        options:
+          - 'y'
+          - 'n'
+  workflow_call:
+    inputs:
+      skip_confirmation:
+        required: true
+        type: string
 
 jobs:
   pre-deploy:
@@ -20,6 +34,8 @@ jobs:
 
   ml-model-scan:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
+    
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
