@@ -6,13 +6,14 @@ name: Build Docker App Image
 on:
   #pull_request:
   #  types: [closed]
-  #  branches: [ "main" ]
+  #  branches:
+  #    - develop
   #  paths:
   #    - 'app.py'
   #    - 'dockerfile'
   #    - 'requirements.txt'
   #workflow_run:
-  #  workflows: ["ML Model Training"]
+  #  workflows: ["Train ML Model"]
   #  types: [completed]
   workflow_dispatch:
     inputs:

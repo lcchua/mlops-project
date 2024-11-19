@@ -3,7 +3,8 @@
 name: Terraform CI
 on:
   #pull_request:
-  #  branches: [ "main" ]
+  #  branches:
+  #    - develop
   #  paths:
   #    - 'terraform/**'
   workflow_dispatch:
