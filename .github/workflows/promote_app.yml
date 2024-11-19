@@ -10,10 +10,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  #pre-deploy:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+  pre-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
       
   Nonprod-to-Prod-Promotion:
     name: Promote Docker App Image

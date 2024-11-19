@@ -23,10 +23,10 @@ env:
   GIT_USEREMAIL: laichwang@gmail.com
 
 jobs:
-  #pre-deploy:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+  pre-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
       
   Training:
     name: Train or Retrain ML Model

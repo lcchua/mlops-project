@@ -9,6 +9,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+
   terraform:
     name: Terraform
     runs-on: ubuntu-latest

@@ -31,10 +31,10 @@ on:
         type: string
 
 jobs:
-  #pre-deploy:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
+  pre-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
 
   Build-and-Push:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
@@ -77,10 +77,6 @@ jobs:
             dvc pull models/model.pkl
           fi
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
       - name: Fetch all tags to get the latest
         id: get_latest_tag
         run: |
@@ -90,6 +86,10 @@ jobs:
           
       - name: Display latest tag
         run: echo "The latest tag is ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build and push the image
         id: build-image

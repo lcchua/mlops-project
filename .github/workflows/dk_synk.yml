@@ -19,32 +19,30 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
+
     - name: Install Snyk CLI
       run: npm install -g snyk
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Fetch all tags to get the latest
-      id: get_latest_tag
-      run: |
-        git fetch --tags
-        echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> "$GITHUB_OUTPUT"
-        echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
-          
-    - name: Display latest tag
-      run: echo "The latest tag is ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
-
     - name: Run Snyk Docker Image Scan And Check Snyk Scan Results
       id: scan-docker-image
       env:
-        ECR_REPO_NAME: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_NAME: ${{ vars.NONPROD_IMAGE_NAME }}
+        ECR_REPO_REG: ${{ steps.login-ecr.outputs.registry }}
+        APP_REPO_NAME: ${{ vars.NONPROD_IMAGE_NAME }}
         SYNK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: |
-        snyk container test ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }} -file=dockerfile --severity-threshold=high 
-        echo "REG_IMAGE_NAME=${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
+        snyk container test ${{ env.ECR_REPO_REG }}/${{ env.APP_REPO_NAME }}:latest -file=dockerfile --severity-threshold=high 
+        echo "REG_IMAGE_NAME=${{ env.ECR_REPO_REG }}/${{ env.APP_REPO_NAME }}:latest" >> $GITHUB_OUTPUT
 
     - name: Display Image Name
       run: echo "The built image name is ${{ steps.scan-docker-image.outputs.REG_IMAGE_NAME }}"
