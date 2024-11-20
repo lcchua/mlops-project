@@ -1,4 +1,4 @@
-name: Synk Python Code Vulnerabilities Scan
+name: Synk Python Code Scan
 
 on:
   #pull_request:

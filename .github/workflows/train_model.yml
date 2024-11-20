@@ -30,7 +30,7 @@ jobs:
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
       
-  Training:
+  ML-Model-Training:
     name: Train or Retrain ML Model
     runs-on: ubuntu-latest
     environment: development
@@ -123,8 +123,8 @@ jobs:
           git push origin main && echo "CP12"
 
   call-workflow:
-    needs: Training
-    if: ${{ needs.Training.result == 'success' }}
+    needs: ML-Model-Training
+    if: ${{ needs.ML-Model-Training.result == 'success' }}
     uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
     with:
       skip_confirmation: 'true'

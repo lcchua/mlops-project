@@ -23,8 +23,8 @@ jobs:
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
       
-  terraform:
-    name: Terraform
+  terraform-cd:
+    name: Terraform CD
     runs-on: ubuntu-latest
     defaults:
       run:

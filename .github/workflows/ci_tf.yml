@@ -15,8 +15,8 @@ jobs:
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
 
-  terraform-checks:
-    name: Terraform Checks
+  terraform-ci:
+    name: Terraform CI
     runs-on: ubuntu-latest
     defaults:
       run:
