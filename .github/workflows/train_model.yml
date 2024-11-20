@@ -91,9 +91,14 @@ jobs:
 
       - name: Train the prediction model
         run: python3 main.py
-
+              
       - name: Test the trained model
         run: python3 -m pytest
+
+      - name: Install Protectai Modelscan
+        run: pip install modelscan
+      - name: Scan ML model
+        run: modelscan -p models/model.pkl
 
       - name: Fetch all tags to get the latest
         id: get_latest_tag
@@ -117,17 +122,9 @@ jobs:
           git commit -a -m "update new dvc configurations" && echo "CP11"
           git push origin main && echo "CP12"
 
-  call_workflow1:
+  call-workflow:
     needs: Training
     if: ${{ needs.Training.result == 'success' }}
-    uses: lcchua/mlops-project/.github/workflows/pkl_modelscan.yml@main
-    with:
-      skip_confirmation: 'true'
-    secrets: inherit
-
-  call-workflow2:
-    needs: call_workflow1
-    if: ${{ needs.call_workflow1.result == 'success' }}
     uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
     with:
       skip_confirmation: 'true'

@@ -10,11 +10,11 @@
 name: Terraform CD
 
 on:
-  pull_request:
-    branches:
-      - develop
-    paths:
-      - 'terraform/**'
+  #pull_request:
+  #  branches:
+  #    - develop
+  #  paths:
+  #    - 'terraform/**'
   workflow_dispatch:
 
 jobs:

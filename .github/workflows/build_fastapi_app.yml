@@ -84,25 +84,42 @@ jobs:
           git fetch --tags
           echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> "$GITHUB_OUTPUT"
           echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
-          
       - name: Display latest tag
         run: echo "The latest tag is ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - name: Save the registry name
+        run:
+          echo "ECR_REPO_NAME=${{ steps.login-ecr.outputs.registry }}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push the image
         id: build-image
-        env:
-          ECR_REPO_NAME: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_NAME: ${{ vars.NONPROD_IMAGE_NAME }}
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} -t ${{ env.IMAGE_NAME }}:latest .
-          docker tag ${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}
-          docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }} --all-tags
-          echo "REG_IMAGE_NAME=${{ env.ECR_REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
+          docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
+          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} $ECR_REPO_NAME/${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}
+          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest $ECR_REPO_NAME/${{ vars.NONPROD_IMAGE_NAME }}:latest
+
+      - name: Install Snyk CLI
+        run: npm install -g
+      - name: Run Snyk Container Scan 
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk container test ${{ vars.NONPROD_IMAGE_NAME }}:latest --severity-threshold=critical
+          snyk container test ${{ vars.NONPROD_IMAGE_NAME }}:latest --severity-threshold=critical --json > snyk_container_report.json
+      - name: Upload Snyk Container Report
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: snyk-container-report
+          path: snyk_container_report.json
+
+      - name: Pust to ECR
+        run: |
+          docker push $ECR_REPO_NAME/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
+          echo "REG_IMAGE_NAME=$ECR_REPO_NAME/${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Display Image Name
         run: echo "The built image name is ${{ steps.build-image.outputs.REG_IMAGE_NAME }}"
+
