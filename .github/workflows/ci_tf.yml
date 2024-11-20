@@ -1,5 +1,5 @@
 # Run CI workflow for Terraform on Pull Request event and workflow_dispatch
-name: Terraform CI
+name: CI Terraform
 
 on:
   #pull_request:
