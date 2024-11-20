@@ -6,7 +6,8 @@ name: Train ML Model
 on:
   #pull_request:
   #  branches:
-  #  - develop
+  #    - develop
+  #    - feature*
   #  paths:
   #    - 'main.py'
   #    - 'config.yml'

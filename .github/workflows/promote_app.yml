@@ -4,10 +4,16 @@
 name: Promote Tested App Image
 
 on:
-  #push:
-  #  branches:
-  #    - main
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Do you want to proceed with promoting 'predict_buy_app' fron nonprod to prod? (y/n)"
+        required: true
+        default: 'y'
+        type: choice
+        options:
+          - 'y'
+          - 'n'
 
 jobs:
   pre-deploy:

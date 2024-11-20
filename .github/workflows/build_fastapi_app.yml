@@ -1,30 +1,30 @@
 # This workflow will build and push a new container image to Amazon ECR:
-#  - Previous docker push step: docker push ${{ env.AWS_ECR_name }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }}.${{ github.run_number }}
 
 name: Build Docker App Image
 
 on:
-  #pull_request:
-  #  types: [closed]
-  #  branches:
-  #    - develop
-  #  paths:
-  #    - 'app.py'
-  #    - 'dockerfile'
-  #    - 'requirements.txt'
-  #workflow_run:
-  #  workflows: ["Train ML Model"]
-  #  types: [completed]
+# Condition 1: Whenever the app source files changes, run build_fastapi_app to 
+# rebuild docker image even though the ml model .pkl file has not changed.
+#  pull_request:
+#    types: [closed]
+#    branches:
+#      - develop
+#    paths:
+#      - 'app.py'
+#      - 'dockerfile'
+#      - 'requirements.txt'
+# Condition 2: In case of having to run build_fastapi_app without train_model having ran.
   workflow_dispatch:
     inputs:
       confirm:
         description: "Do you want to proceed? (y/n)"
         required: true
-        default: n
+        default: 'n'
         type: choice
         options:
           - 'y'
           - 'n'
+# Condition 3: Whenver train_model runs, build_fastapi_app also be run.
   workflow_call:
     inputs:
       skip_confirmation:
@@ -106,4 +106,3 @@ jobs:
 
       - name: Display Image Name
         run: echo "The built image name is ${{ steps.build-image.outputs.REG_IMAGE_NAME }}"
-

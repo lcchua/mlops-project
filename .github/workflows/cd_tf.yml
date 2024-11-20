@@ -1,12 +1,20 @@
-# Getting ready to test the workflow run on workflow dispatch with input selection event
-
+# Run CD workflow for Terraform on Pull Request event and workflow_dispatch.
+# Note that the AWS S3 and ECR resources are deployed one-time and are
+# commonly used and shared across nonprod and prod environments: 
+#    a) The S3 bucket is only used in nonprod for version control metadata 
+#       storage of the ML models under 's3://ce7-grp-1-bucket/DVC_artefacts/' folder
+#       and the training datasets under 's3://ce7-grp-1-bucket/new_ML_data/' folder.
+#    b) The ECR is deployed with 2 private repos for nonprod and prod deployments - 
+#           i.  'ce7-grp-1-bucket/nonprod/predict_buy_app'
+#           ii. 'ce7-grp-1-bucket/prod/predict_buy_app'.
 name: Terraform CD
 
 on:
-  #push:
-  #  branches: [ "main"]
-  #  paths:
-  #    - 'terraform/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'terraform/**'
   workflow_dispatch:
 
 jobs:
@@ -45,9 +53,3 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-
-      #- name: Pause 2min to verify bucket creation
-      #  run: sleep 120
-
-      #- name: Terraform Destroy
-      #  run: terraform destroy -auto-approve

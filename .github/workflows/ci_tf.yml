@@ -1,6 +1,6 @@
-# Getting ready to test the workflow run on Push and Pull Request events
-
+# Run CI workflow for Terraform on Pull Request event and workflow_dispatch
 name: Terraform CI
+
 on:
   #pull_request:
   #  branches:
@@ -15,8 +15,8 @@ jobs:
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
 
-  terraform:
-    name: Terraform
+  terraform-checks:
+    name: Terraform Checks
     runs-on: ubuntu-latest
     defaults:
       run:
