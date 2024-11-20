@@ -7,7 +7,7 @@
 #    b) The ECR is deployed with 2 private repos for nonprod and prod deployments - 
 #           i.  'ce7-grp-1-bucket/nonprod/predict_buy_app'
 #           ii. 'ce7-grp-1-bucket/prod/predict_buy_app'.
-name: Terraform CD
+name: CD Terraform
 
 on:
   #pull_request:
