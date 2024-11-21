@@ -25,6 +25,7 @@ jobs:
     name: Promote Docker App Image
     runs-on: ubuntu-latest
     environment: development
+    needs: [pre-deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
 
     steps:
