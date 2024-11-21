@@ -82,7 +82,6 @@ jobs:
         run: |
           if ! test -d .dvc; then
             dvc init
-            git add .
             git commit -m "initialise dvc tracking"
             git push
           fi

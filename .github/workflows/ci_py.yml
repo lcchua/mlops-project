@@ -4,6 +4,7 @@ name: CI Python
 on:
   #pull_request:
   #  branches:
+  #    - main
   #    - develop
   #  paths:
   #    - '*.py'
@@ -55,4 +56,15 @@ jobs:
         uses: psf/black@stable
         with:
           options: "--check --verbose"
-        
+
+  python-code-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Run Snyk Code Scan
+        run: snyk code test --severity-threshold=high # this covers high and critical
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
