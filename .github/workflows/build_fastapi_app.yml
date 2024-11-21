@@ -112,8 +112,7 @@ jobs:
           docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
             -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
-          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
+            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} && docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
 
       # Snyk scan the Docker image
