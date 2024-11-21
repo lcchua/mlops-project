@@ -105,14 +105,15 @@ jobs:
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        run: | # The `aws ecr batch-delete-image` command is to untag the latest tag 
-          aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} --image-ids imageTag=latest
+        run: | # The first command below runs in quiet mode to untag the latest tag 
+          aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} \
+            --image-ids imageTag=latest /dev/null 2>&1
           docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-          -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
+            -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-          ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
+            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
-          ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
+            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
 
       # Snyk scan the Docker image
       - name: Install Snyk CLI
