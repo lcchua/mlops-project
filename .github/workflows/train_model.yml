@@ -14,6 +14,15 @@ on:
   #    - 'steps/*.py'
   #    - 'requirements.txt'
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Do you really want to proceed? (y/n)? Make sure 'dvc init' has completed."
+        required: true
+        default: 'n'
+        type: choice
+        options:
+          - 'y'
+          - 'n'
 
 permissions:
   contents: write

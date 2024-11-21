@@ -9,15 +9,6 @@ on:
   #  paths:
   #    - 'terraform/**
   workflow_dispatch:
-    inputs:
-      confirm:
-        description: "Do you really want to proceed? (y/n)"
-        required: true
-        default: 'n'
-        type: choice
-        options:
-          - 'y'
-          - 'n'  
 
 jobs:
   pre-deploy:

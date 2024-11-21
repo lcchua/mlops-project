@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: "Do you really want to proceed? (y/n)"
+        description: "Do you really want to proceed? (y/n)?"
         required: true
         default: 'n'
         type: choice
