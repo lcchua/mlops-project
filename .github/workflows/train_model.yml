@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: "Do you really want to proceed? (y/n)? Make sure 'dvc init' has completed."
+        description: "Do you really want to proceed? (y/n)?"
         required: true
         default: 'n'
         type: choice
@@ -43,6 +43,7 @@ jobs:
     name: Train or Retrain ML Model
     runs-on: ubuntu-latest
     environment: development
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
 
     steps:
       - name: Checkout code
