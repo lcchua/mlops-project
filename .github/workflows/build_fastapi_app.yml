@@ -30,6 +30,13 @@ on:
         required: true
         type: string
 
+permissions:
+          contents: write
+
+env:
+  GIT_USERNAME: lcchua
+  GIT_USEREMAIL: laichwang@gmail.com
+
 jobs:
   pre-deploy:
     runs-on: ubuntu-latest
@@ -39,10 +46,9 @@ jobs:
   Build-and-Push:
     # Build the trained model into FastAPI Docker Image and Push Image to registry
     name: Build and Push
-    #if: github.event.pull_request.merged
     runs-on: ubuntu-latest
     environment: development
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }} || ${{ github.event.pull_request.merged }}
 
     steps:
       - name: Checkout Code
@@ -64,15 +70,20 @@ jobs:
         run: |
           pip install dvc[s3]
 
+      - name: Configure Git
+        run: |
+            git config --global user.name ${{ env.GIT_USERNAME }}
+            git config --global user.email ${{ env.GIT_USEREMAIL }}
+
       # Only pull from DVC the last-commited ML model if 
       # there is no model already exisiting locally in the event
       # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
         run: |
           if [[ -f "models/model.pkl.dvc" && -f "models/model.pkl" ]]; then
-            echo "A Ml Model is already existing in the 'models' sub-directory!" 
+            echo "A ML Model is already existing in the 'models' sub-directory!" 
           elif [[ -f "models/model.pkl" ]]; then
-            echo "A Ml Model is already existing in the 'models' sub-directory!"
+            echo "A ML Model is already existing in the 'models' sub-directory!"
           else
             dvc pull models/model.pkl
           fi
