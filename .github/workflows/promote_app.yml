@@ -9,7 +9,7 @@ on:
       confirm:
         description: "Do you really want to proceed with promoting the latest 'predict_buy_app' fron nonprod to prod? (y/n)?"
         required: true
-        default: 'y'
+        default: 'n'
         type: choice
         options:
           - 'y'
@@ -25,6 +25,7 @@ jobs:
     name: Promote Docker App Image
     runs-on: ubuntu-latest
     environment: development
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
 
     steps:
       - name: Checkout code
