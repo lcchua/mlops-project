@@ -108,7 +108,7 @@ jobs:
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
         run: | # The first command below runs in quiet mode to untag the latest tag 
           aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} \
-            --image-ids imageTag=latest /dev/null 2>&1
+            --image-ids imageTag=latest 2>/dev/null
           docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
             -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \

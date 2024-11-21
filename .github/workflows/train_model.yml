@@ -104,7 +104,9 @@ jobs:
               
       - name: Test the trained model
         run: python3 -m pytest
-  
+
+    # If are to add ML model scanning, then insert the action step here 
+
       - name: Fetch all tags to get the latest
         id: get_latest_tag
         run: |
