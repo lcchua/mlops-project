@@ -55,7 +55,8 @@ jobs:
         run: | # First retrieve the ver no of the latest app image in the nonprod repo
           LATEST_VER=$(aws ecr describe-images --repository ${{ env.NONPROD_REPO }} \
             --region ${{ env.AWS_REGION }} \
-            --query "sort_by(imageDetails, &imagePushedAt)[-1].imageTags[0]" --output text)
+            --query "sort_by(imageDetails, &imagePushedAt)[-1].imageTags" --output text) | \
+            grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+-[A-Z]{3}\.[0-9]+'
           docker pull ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest
           docker tag ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest \
             ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
