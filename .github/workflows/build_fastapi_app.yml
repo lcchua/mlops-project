@@ -112,8 +112,9 @@ jobs:
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }} ${{ steps.get_registry_name.outputs.ECR_REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest ${{ steps.get_registry_name.outputs.ECR_REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
 
+      # Snyk scan the Docker image
       - name: Install Snyk CLI
-        run: npm install -g
+        run: npm install -g snyk
       - name: Run Snyk Container Scan 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -126,7 +127,7 @@ jobs:
           name: snyk-container-report
           path: snyk_container_report.json
 
-      - name: Pust to ECR
+      - name: Push to ECR
         run: |
           docker push $ECR_REPO_NAME/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
           echo "REG_IMAGE_NAME=${{ steps.get_registry_name.outputs.ECR_REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
