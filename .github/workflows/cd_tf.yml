@@ -42,6 +42,7 @@ jobs:
   on-success:
     name: Terraform CD
     runs-on: ubuntu-latest
+    environment: development
     needs: [pre-deploy]
     defaults:
       run:
