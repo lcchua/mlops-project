@@ -1,4 +1,5 @@
-# Run CI workflow for Terraform on Pull Request event and workflow_dispatch
+# Run CI workflow for Terraform on Pull Request event and workflow_dispatch.
+# Take note that the 'cd_tf.yml' workflow execution is dispatched manually.
 name: CI Terraform
 
 on:
@@ -6,8 +7,17 @@ on:
   #  branches:
   #    - develop
   #  paths:
-  #    - 'terraform/**'
+  #    - 'terraform/**
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Do you really want to proceed? (y/n)"
+        required: true
+        default: 'n'
+        type: choice
+        options:
+          - 'y'
+          - 'n'  
 
 jobs:
   pre-deploy:

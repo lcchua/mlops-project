@@ -1,21 +1,37 @@
-# Run CD workflow for Terraform on Pull Request event and workflow_dispatch.
+# Run CD workflow for Terraform on workflow_dispatch.
 # Note that the AWS S3 and ECR resources are deployed one-time and are
 # commonly used and shared across nonprod and prod environments: 
-#    a) The S3 bucket is only used in nonprod for version control metadata 
-#       storage of the ML models under 's3://ce7-grp-1-bucket/DVC_artefacts/' folder
-#       and the training datasets under 's3://ce7-grp-1-bucket/new_ML_data/' folder.
-#    b) The ECR is deployed with 2 private repos for nonprod and prod deployments - 
-#           i.  'ce7-grp-1-bucket/nonprod/predict_buy_app'
-#           ii. 'ce7-grp-1-bucket/prod/predict_buy_app'.
+#   a) The S3 bucket is only used in nonprod for version control metadata 
+#      storage of the ML models under 's3://ce7-grp-1-bucket/DVC_artefacts/' folder
+#      and the training datasets under 's3://ce7-grp-1-bucket/new_ML_data/' folder.
+#   b) The ECR is deployed with 2 private repos for nonprod and prod deployments - 
+#        i.  'ce7-grp-1-bucket/nonprod/predict_buy_app'
+#        ii. 'ce7-grp-1-bucket/prod/predict_buy_app'.
 name: CD Terraform
 
 on:
-  #pull_request:
-  #  branches:
-  #    - develop
-  #  paths:
-  #    - 'terraform/**'
+  # As the S3/ECR infrastructure deployments are one-time
+  # and "as-and-when-needed", this workflow is executed 
+  # on-demand or after ci_tf.yml workflow has completed successfully.
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Do you really want to proceed? (y/n)"
+        required: true
+        default: 'n'
+        type: choice
+        options:
+          - 'y'
+          - 'n'
+  # Note that the workflow_run event trigger a run onlu if the workflow 
+  # file is on the default branch.
+  workflow_run:
+    workflows: [CI Terraform]
+    types:
+      - completed
+    branches:
+      - main
+      - develop
 
 jobs:
   pre-deploy:
@@ -23,13 +39,14 @@ jobs:
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
       
-  terraform-cd:
+  on-success:
     name: Terraform CD
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: terraform
-
+  
+    if: ${{ github.event.workflow_run.conclusion == 'success'}}
     steps:
       - name: Checkout Codes
         uses: actions/checkout@v4.1.7
@@ -53,3 +70,9 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'Failure in CI Terraform workflow hence CD Terraform cannot run'
