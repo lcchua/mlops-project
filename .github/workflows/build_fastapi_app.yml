@@ -43,7 +43,7 @@ jobs:
     # Build the trained model into FastAPI Docker Image and Push Image to nonprod registry
     name: Build and Push
     runs-on: ubuntu-latest
-    environment: development
+    environment: nonprod
     needs: [pre-deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }} || ${{ github.event.pull_request.merged }}
 

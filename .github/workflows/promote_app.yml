@@ -24,7 +24,7 @@ jobs:
   Nonprod-to-Prod-Promotion:
     name: Promote Docker App Image
     runs-on: ubuntu-latest
-    environment: development
+    environment: nonprod
     needs: [pre-deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
 
