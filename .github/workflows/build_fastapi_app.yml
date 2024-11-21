@@ -36,6 +36,7 @@ permissions:
 env:
   GIT_USERNAME: lcchua
   GIT_USEREMAIL: laichwang@gmail.com
+  ML_ARTEFACTS_S3: s3://ce7-grp-1-bucket/DVC_artefacts/
 
 jobs:
   pre-deploy:
@@ -53,6 +54,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+        with:
+          # Ensure full repo is cloned
+          fetch-depth: 0
 
       - name: Install Python
         uses: actions/setup-python@v4
@@ -67,13 +71,12 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Install DVC
-        run: |
-          pip install dvc[s3]
+        run: pip install dvc[all]
 
       - name: Configure Git
         run: |
-            git config --global user.name ${{ env.GIT_USERNAME }}
-            git config --global user.email ${{ env.GIT_USEREMAIL }}
+          git config --global user.name ${{ env.GIT_USERNAME }}
+          git config --global user.email ${{ env.GIT_USEREMAIL }}
 
       # Only pull from DVC the last-commited ML model if 
       # there is no model already exisiting locally in the event
@@ -120,7 +123,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
           snyk container test ${{ vars.NONPROD_IMAGE_NAME }}:latest --severity-threshold=critical --file=./dockerfile
-          snyk container test ${{ vars.NONPROD_IMAGE_NAME }}:latest --severity-threshold=critical --json > snyk_container_report.json
+          snyk container test ${{ vars.NONPROD_IMAGE_NAME }}:latest --severity-threshold=critical --file=.dockerfile --json > snyk_container_report.json
         continue-on-error: true
       - name: Upload Snyk Container Report
         uses: actions/upload-artifact@v4.3.0
@@ -130,7 +133,7 @@ jobs:
 
       - name: Push to ECR
         run: |
-          docker push $ECR_REPO_NAME/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
+          docker push ${{ steps.get_registry_name.outputs.ECR_REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
           echo "REG_IMAGE_NAME=${{ steps.get_registry_name.outputs.ECR_REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ steps.get_latest_tag.outputs.LATEST_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Display Image Name
