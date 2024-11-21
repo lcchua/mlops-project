@@ -43,6 +43,7 @@ jobs:
     name: Train or Retrain ML Model
     runs-on: ubuntu-latest
     environment: development
+    needs: [pre-deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
 
     steps:
@@ -127,7 +128,7 @@ jobs:
           git push origin main && echo "CP12"
 
   call-workflow:
-    needs: ML-Model-Training
+    needs: [pre-deploy, ML-Model-Training]
     if: ${{ needs.ML-Model-Training.result == 'success' }}
     uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
     with:

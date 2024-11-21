@@ -19,6 +19,7 @@ jobs:
 
   terraform-tflint-validate:
     runs-on: ubuntu-latest
+    needs: [pre-deploy]
     defaults:
       run:
         working-directory: terraform
@@ -56,6 +57,7 @@ jobs:
 
   terraform-checkov:
     runs-on: ubuntu-latest
+    needs: [pre-deploy]
     defaults:
       run:
         working-directory: terraform

@@ -44,6 +44,7 @@ jobs:
     name: Build and Push
     runs-on: ubuntu-latest
     environment: development
+    needs: [pre-deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }} || ${{ github.event.pull_request.merged }}
 
     steps:
