@@ -40,7 +40,7 @@ jobs:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
 
   Build-and-Push:
-    # Build the trained model into FastAPI Docker Image and Push Image to registry
+    # Build the trained model into FastAPI Docker Image and Push Image to nonprod registry
     name: Build and Push
     runs-on: ubuntu-latest
     environment: development
@@ -105,7 +105,7 @@ jobs:
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        run: | # The `aws ecr batch-delete-image` command is to untag the latest tag
+        run: | # The `aws ecr batch-delete-image` command is to untag the latest tag 
           aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} --image-ids imageTag=latest
           docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
           -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .

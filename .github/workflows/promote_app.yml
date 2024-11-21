@@ -42,7 +42,7 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
+    
       - name: Pull and Push latest app image from nonprod to prod
         id: pull-push-image
         env:
@@ -50,11 +50,17 @@ jobs:
           SRC_ECR_REPO: ${{ vars.NONPROD_IMAGE_NAME }}
           DST_ECR_REG: ${{ steps.login-ecr.outputs.registry }}
           DST_ECR_REPO: ${{ vars.PROD_IMAGE_NAME }}
-        run: |
+        run: | # First retrieve the ver no of the latest app image in the nonprod repo
+          LATEST_VER=$(aws ecr describe-images --repository xxx --region yyy \
+            --query "sort_by(imageDetails, &imagePushedAt)[-1].imageTags[0]" --output text)
           docker pull ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest
-          docker tag ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
-          docker push ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
-          echo "REG_IMAGE_NAME=${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest" >> $GITHUB_OUTPUT         
+          docker tag ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest \
+            ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:latest
+          docker tag ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest \
+            ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:$LATEST_VER
+          docker push ${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }} --all-tags
+          echo "REG_IMAGE_NAME=${{ env.DST_ECR_REG }}/${{ env.DST_ECR_REPO }}:$LATEST_VER" >> $GITHUB_OUTPUT         
 
       - name: Display Image Name
-        run: echo "The built image name is ${{ steps.pull-push-image.outputs.REG_IMAGE_NAME }}"
+        run: |
+          echo "Promoted app image: ${{ steps.pull-push-image.outputs.REG_IMAGE_NAME }}"

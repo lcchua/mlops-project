@@ -82,6 +82,7 @@ resource "aws_ecr_repository_policy" "this_repo_policy" {
           "ecr:DescribeRepositories",
           "ecr:GetRepositoryPolicy",
           "ecr:ListImages",
+          "ecr:DescribeImages",
           "ecr:DeleteRepository",
           "ecr:BatchDeleteImage",
           "ecr:SetRepositoryPolicy",
