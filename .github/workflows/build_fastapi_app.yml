@@ -50,24 +50,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          # Ensure full repo is cloned
-          fetch-depth: 0
+          fetch-depth: 0 # Ensure full repo is cloned
 
+      # Prepare the working environment
       - name: Install Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.12" # Specify the required Python version
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
-
       - name: Install DVC
         run: pip install dvc[all]
-
       - name: Configure Git
         env:
           GIT_USERNAME: lcchua
@@ -89,6 +86,7 @@ jobs:
             dvc pull models/model.pkl
           fi
 
+      # Get the latest tag
       - name: Fetch all tags to get the latest
         id: get_latest_tag
         run: |
@@ -98,16 +96,16 @@ jobs:
       - name: Display latest tag
         run: echo "The latest tag is ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
 
+      # Build the Docker image
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
       - name: Build Docker image
         id: build-image
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        run: | # The `aws ecr batch-delete-image` command is to untag the latest
+        run: | # The `aws ecr batch-delete-image` command is to untag the latest tag
           aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} --image-ids imageTag=latest
           docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
           -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
@@ -132,14 +130,11 @@ jobs:
           name: snyk-container-report
           path: snyk_container_report.json
 
+      # Push the Docker image
       - name: Push image to ECR
+        id: push-image
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
         run: |
           docker push ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
-          echo "REG_IMAGE_NAME=${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
-
-      - name: Display Image Name
-        run: echo "The built image name is ${{ steps.build-image.outputs.REG_IMAGE_NAME }}"
-
