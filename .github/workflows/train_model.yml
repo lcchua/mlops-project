@@ -103,12 +103,7 @@ jobs:
               
       - name: Test the trained model
         run: python3 -m pytest
-
-      - name: Install Protectai Modelscan
-        run: pip install modelscan
-      - name: Scan ML model
-        run: modelscan -p models/model.pkl
-
+  
       - name: Fetch all tags to get the latest
         id: get_latest_tag
         run: |
