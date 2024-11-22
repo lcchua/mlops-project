@@ -82,6 +82,7 @@ jobs:
       - name: First-time initialise DVC only
         run: |
           if ! test -d .dvc; then
+            git checkout develop
             dvc init
             git commit -m "initialise dvc tracking"
             git push
@@ -116,6 +117,7 @@ jobs:
 
       - name: Version ML and Git artefacts
         run: |
+          git checkout develop
           dvc add data/train.csv && echo "CP1"
           dvc add data/test.csv && echo "CP2"
           git add data/train.csv.dvc data/.gitignore && echo "CP3"
@@ -128,7 +130,6 @@ jobs:
           dvc push && echo "CP10"
           git commit -a -m "update new dvc configurations" && echo "CP11"
           git push && echo "CP12"
-        #  git push origin main && echo "CP12"
 
   call-workflow:
     needs: [pre-deploy, ML-Model-Training]

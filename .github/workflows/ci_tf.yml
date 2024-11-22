@@ -6,7 +6,6 @@ on:
   pull_request:
     branches:
       - develop
-      - main
     paths:
       - 'terraform/**'
   workflow_dispatch:
