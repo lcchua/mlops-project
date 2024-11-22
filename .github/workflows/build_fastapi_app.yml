@@ -2,18 +2,11 @@
 name: Build Docker App Image
 
 on:
-# Condition 1: Whenever the app source files changes, run build_fastapi_app to 
-# rebuild docker image even though the ml model .pkl file has not changed.
-  pull_request:
-    types: [closed]
-    branches:
-      - develop
-    paths:
-      - 'app.py'
-      - 'dockerfile'
-      - 'requirements.txt'
-      - 'trigger_buildapp.txt'
-# Condition 2: In case of having to run build_fastapi_app without train_model having ran.
+# Condition 1: In case of having to run build_fastapi_app without train_model having ran.
+# In cases wherein the 'app.py', 'dockerfile' and 'requirements.txt' have changed, but the 
+# ML model pkl did not change, and the FastAPI app Docker image requires to be rebuilt and 
+# pushed into ECR.branch_protection_rule.branch_protection_rule.
+# Note that the dummy 'trigger_buildapp.txt' can be added or modified to trigger this workflow for testing purpose.
   workflow_dispatch:
     inputs:
       confirm:
@@ -24,7 +17,7 @@ on:
         options:
           - 'y'
           - 'n'
-# Condition 3: Whenver train_model runs, build_fastapi_app also be run.
+# Condition 23: Whenver train_model runs successfully, it calls build_fastapi_app to run too.
   workflow_call:
     inputs:
       skip_confirmation:
@@ -46,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [pre-deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }} || ${{ github.event.pull_request.merged }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
 
     steps:
       - name: Checkout Code

@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [pre-deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged == true }}
 
     steps:
       - name: Checkout code
