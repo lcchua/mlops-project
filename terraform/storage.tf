@@ -5,20 +5,11 @@
 #  byte_length = 2
 #}
 
-# Check if S3 bucket already exists
-data "aws_s3_bucket" "existing_bucket" {
-  bucket = var.ml_s3bucket_name
-}
-locals {
-  bucket_exists = try(data.aws_s3_bucket.existing_bucket.arn, null)
-}
-
 # S3 bucket creation
 resource "aws_s3_bucket" "this" {
   #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
   #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
   #  Custom IAM policy attached to this S3 resource
-  count = local.bucket_exists == null ? 1 : 0
   #  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
   bucket = var.ml_s3bucket_name
 
@@ -30,12 +21,12 @@ resource "aws_s3_bucket" "this" {
 }
 output "s3bucket" {
   description = "dev stw S3 bucket"
-  value       = aws_s3_bucket.this[count.index].id
+  value       = aws_s3_bucket.this.id
 }
 
 # Fix CKV_AWS_145
 resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_1" {
-  bucket = aws_s3_bucket.this[count.index].bucket
+  bucket = aws_s3_bucket.this.bucket
 
   rule {
     apply_server_side_encryption_by_default {
@@ -46,7 +37,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "good_sse_1" {
 
 # Enable bucket versioning
 resource "aws_s3_bucket_versioning" "this-bucket-versioning" {
-  bucket = aws_s3_bucket.this[count.index].id
+  bucket = aws_s3_bucket.this.id
 
   versioning_configuration {
     status = "Enabled"
@@ -76,7 +67,7 @@ output "s3bucket-acl" {
 #CKV2_AWS_65:Ensure access control lists for S3 buckets are disabled
 #  Custom IAM policy attached to this S3 resource
 resource "aws_s3_bucket_ownership_controls" "this-owner-ctl" {
-  bucket = aws_s3_bucket.this[count.index].id
+  bucket = aws_s3_bucket.this.id
 
   rule {
     object_ownership = "ObjectWriter"
@@ -90,7 +81,7 @@ resource "aws_s3_bucket_public_access_block" "this-pub-access-blk" {
   #checkov:skipped=CKV_AWS_54:Ensure S3 bucket has block public policy enabled
   #checkov:skipped=CKV_AWS_53:Ensure S3 bucket has block public ACLS enabled
   #  Custom IAM policy attached to this S3 resource
-  bucket = aws_s3_bucket.this[count.index].id
+  bucket = aws_s3_bucket.this.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -100,7 +91,7 @@ resource "aws_s3_bucket_public_access_block" "this-pub-access-blk" {
 
 # Create a bucket folder for new ML datasets
 resource "aws_s3_object" "folder1" {
-  bucket = aws_s3_bucket.this[count.index].id
+  bucket = aws_s3_bucket.this.id
   key    = "${var.MLdata_s3bucket_folder_name}/"
   acl    = "private"
   source = "/dev/null"
@@ -108,7 +99,7 @@ resource "aws_s3_object" "folder1" {
 
 # Create a bucket folder for DVC artefacts
 resource "aws_s3_object" "folder2" {
-  bucket = aws_s3_bucket.this[count.index].id
+  bucket = aws_s3_bucket.this.id
   key    = "${var.DVC_s3bucket_folder_name}/"
   acl    = "private"
   source = "/dev/null"
@@ -116,7 +107,7 @@ resource "aws_s3_object" "folder2" {
 
 # Define the custom bucket IAM policy for DVC accesses
 resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
-  bucket = aws_s3_bucket.this[count.index].id
+  bucket = aws_s3_bucket.this.id
   policy = data.aws_iam_policy_document.allow_access_from_another_account.json
 }
 
@@ -140,8 +131,8 @@ data "aws_iam_policy_document" "allow_access_from_another_account" {
       "s3:ListBucket"
     ]
     resources = [
-      aws_s3_bucket.this[count.index].arn,
-      "${aws_s3_bucket.this[count.index].arn}/*"
+      aws_s3_bucket.this.arn,
+      "${aws_s3_bucket.this.arn}/*"
     ]
   }
 }

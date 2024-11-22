@@ -1,12 +1,4 @@
-# Check if ECR report already exists
-data "aws_ecr_repository" "existing_repo" {
-  name = "${var.project_family}/${var.environment}/${var.name}"
-}
-locals {
-  repo_exists = try(data.aws_ecr_repository.existing_repo.arn, null)
-}
 resource "aws_ecr_repository" "this" {
-  count = local.repo_exists == null ? 1: 0
   name  = "${var.project_family}/${var.environment}/${var.name}"
 
   image_tag_mutability = var.image_tag_mutability # Fix CKV_AWS_51
@@ -33,8 +25,8 @@ resource "aws_ecr_repository" "this" {
 }
 
 resource "aws_ecr_lifecycle_policy" "this_lifecycle_policy" {
-  #count = var.expiration_after_days > 0 ? 1 : 0
-  repository = aws_ecr_repository.this[count.index].name
+  count = var.expiration_after_days > 0 ? 1 : 0
+  repository = aws_ecr_repository.this.name
 
   # count_type:
   #   imageCountMoreThan - if there are more than a specified number of images, some will be expired.
