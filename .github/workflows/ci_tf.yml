@@ -3,12 +3,12 @@
 name: CI Terraform
 
 on:
-  #pull_request:
-  #  branches:
-  #    - develop
-  #    - main
-  #  paths:
-  #    - 'terraform/**
+  pull_request:
+    branches:
+      - develop
+      - main
+    paths:
+      - 'terraform/**'
   workflow_dispatch:
 
 jobs:

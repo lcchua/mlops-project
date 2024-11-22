@@ -2,13 +2,13 @@
 name: CI Python
 
 on:
-  #pull_request:
-  #  branches:
-  #    - main
-  #    - develop
-  #  paths:
-  #    - '*.py'
-  #    - '**/*.py'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - '*.py'
+      - '**/*.py'
   workflow_dispatch:
 
 jobs:

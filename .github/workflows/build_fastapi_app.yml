@@ -4,14 +4,15 @@ name: Build Docker App Image
 on:
 # Condition 1: Whenever the app source files changes, run build_fastapi_app to 
 # rebuild docker image even though the ml model .pkl file has not changed.
-#  pull_request:
-#    types: [closed]
-#    branches:
-#      - develop
-#    paths:
-#      - 'app.py'
-#      - 'dockerfile'
-#      - 'requirements.txt'
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+    paths:
+      - 'app.py'
+      - 'dockerfile'
+      - 'requirements.txt'
+      - 'trigger_buildapp.txt'
 # Condition 2: In case of having to run build_fastapi_app without train_model having ran.
   workflow_dispatch:
     inputs:
