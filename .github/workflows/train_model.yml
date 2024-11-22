@@ -137,7 +137,7 @@ jobs:
   call-workflow:
     needs: [pre-deploy, ML-Model-Training]
     if: ${{ needs.ML-Model-Training.result == 'success' }}
-    uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@develop
+    uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
     with:
       skip_confirmation: 'true'
     secrets: inherit
