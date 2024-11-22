@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - develop
-      - feature*
     paths:
       - 'main.py'
       - 'config.yml'
@@ -45,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [pre-deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged == true }}
 
     steps:
       - name: Checkout code
@@ -128,7 +127,8 @@ jobs:
           dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
           dvc push && echo "CP10"
           git commit -a -m "update new dvc configurations" && echo "CP11"
-          git push origin main && echo "CP12"
+          git push && echo "CP12"
+        #  git push origin main && echo "CP12"
 
   call-workflow:
     needs: [pre-deploy, ML-Model-Training]
