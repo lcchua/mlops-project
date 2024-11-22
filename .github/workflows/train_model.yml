@@ -24,8 +24,7 @@ on:
           - 'y'
           - 'n'
 
-permissions:
-  contents: write
+permissions: write-all
 
 env:
   ML_ARTEFACTS_S3: s3://ce7-grp-1-bucket/DVC_artefacts/
