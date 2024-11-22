@@ -1,5 +1,14 @@
+# Check if ECR report already exists
+data "aws_ecr_repostory" "existing_repo" {
+  name = "${var.project_family}/${var.environment}/${var.name}"
+}
+locals {
+  repo_exists = try(data.aws_ecr_repository.existing_repo.arn, null)
+}
 resource "aws_ecr_repository" "this" {
-  name                 = "${var.project_family}/${var.environment}/${var.name}"
+  count = local.repo_exists == null ? 1: 0
+  name  = "${var.project_family}/${var.environment}/${var.name}"
+
   image_tag_mutability = var.image_tag_mutability # Fix CKV_AWS_51
   force_delete = var.force_delete
 

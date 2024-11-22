@@ -5,12 +5,20 @@
 #  byte_length = 2
 #}
 
+# Check if S3 bucket already exists
+data "aws_s3_bucket" "existing_bucket" {
+  bucket = var.ml_s3bucket_name
+}
+locals {
+  bucket_exists = try(data.aws_s3_bucket.existing_bucket.arn, null)
+}
+
 # S3 bucket creation
 resource "aws_s3_bucket" "this" {
   #checkov:skipped=CKV2_AWS_62:Ensure S3 buckets should have event notifications enabled
   #checkov:skipped=CKV_AWS_144:Ensure that S3 bucket has cross-region replication enabled
   #  Custom IAM policy attached to this S3 resource
-
+  count = local.bucket_exists == null ? 1: 0
   #  bucket = "${var.ml_s3bucket_name}-${random_id.suffix_s3.dec}"
   bucket = var.ml_s3bucket_name
 
