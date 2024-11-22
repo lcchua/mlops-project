@@ -78,6 +78,7 @@ jobs:
           elif [[ -f "models/model.pkl" ]]; then
             echo "A ML Model is already existing in the 'models' sub-directory!"
           else
+            git fetch origin
             git checkout develop
             dvc pull models/model.pkl
           fi

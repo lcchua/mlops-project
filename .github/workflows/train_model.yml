@@ -82,6 +82,7 @@ jobs:
       - name: First-time initialise DVC only
         run: |
           if ! test -d .dvc; then
+            git fetch origin
             git checkout develop
             dvc init
             git commit -m "initialise dvc tracking"
