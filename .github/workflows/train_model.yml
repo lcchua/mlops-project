@@ -84,6 +84,7 @@ jobs:
       - name: First-time initialise DVC only
         run: |
           if ! test -d .dvc; then
+            git fetch
             dvc init
             git commit -m "initialise dvc tracking"
             git push
@@ -92,7 +93,8 @@ jobs:
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
       - name: Pull from DVC
         run: |
-          if [[ -f "data/train.csv.dvc" && -f "data/test.csv.dvc" ]]; then 
+          if [[ -f "data/train.csv.dvc" && -f "data/test.csv.dvc" ]]; then
+            git fetch
             dvc pull data/train.csv data/test.csv
           fi
 
@@ -118,6 +120,7 @@ jobs:
 
       - name: Version ML and Git artefacts
         run: |
+          git fetch
           dvc add data/train.csv && echo "CP1"
           dvc add data/test.csv && echo "CP2"
           git add data/train.csv.dvc data/.gitignore && echo "CP3"
