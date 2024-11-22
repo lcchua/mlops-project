@@ -23,7 +23,7 @@ on:
         options:
           - 'y'
           - 'n'
-  # Note that the workflow_run event trigger a run onlu if the workflow 
+  # Note that the workflow_run event trigger a run only if the workflow 
   # file is on the default branch.
   workflow_run:
     workflows: [CI Terraform]
