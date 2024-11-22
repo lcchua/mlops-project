@@ -46,6 +46,6 @@ variable "encryption_type" {
 variable "expiration_after_days" {
   type = number
   description = "(Optional) Delete images older than X days."
-  default = 0
+  default = 1
 
 }

@@ -1,5 +1,5 @@
 # Check if ECR report already exists
-data "aws_ecr_repostory" "existing_repo" {
+data "aws_ecr_repository" "existing_repo" {
   name = "${var.project_family}/${var.environment}/${var.name}"
 }
 locals {
@@ -33,8 +33,8 @@ resource "aws_ecr_repository" "this" {
 }
 
 resource "aws_ecr_lifecycle_policy" "this_lifecycle_policy" {
-  count = var.expiration_after_days > 0 ? 1 : 0
-  repository = aws_ecr_repository.this.name
+  #count = var.expiration_after_days > 0 ? 1 : 0
+  repository = aws_ecr_repository.this[count.index].name
 
   # count_type:
   #   imageCountMoreThan - if there are more than a specified number of images, some will be expired.
