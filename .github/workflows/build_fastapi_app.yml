@@ -7,7 +7,7 @@ on:
       - develop
     types: [closed]
   workflow_run:
-    workflows: ["Traing ML Model"]
+    workflows: ["Train ML Model"]
     types:
       - completed
   #  paths:
