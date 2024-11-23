@@ -130,15 +130,16 @@ jobs:
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
           dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
           dvc push && echo "CP10"
-          git commit -a -m "update new dvc configurations" --quiet && echo "CP11"
-          git push --quiet && echo "CP12"
+        #  git commit -a -m "update new dvc configurations" --quiet && echo "CP11"
+        #  git push --quiet && echo "CP12"
 
       - name: Generate Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           commit-message: |
             [create-pull-request] Automated change by train_model.yml
-          title: Changes by create-pr action - train_model workflow
+          title: |
+            Changes by create-pr action - train_model workflow
           delete-branch: true
 
   #call-workflow:
