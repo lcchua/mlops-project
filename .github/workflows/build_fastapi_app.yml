@@ -10,7 +10,7 @@ on:
       - 'config.yml'
       - 'steps/*.py'
       - 'requirements.txt'
-      - 'trigger_training.py'
+      - 'trigger_develop.py'
 # Condition 1: In case of having to run build_fastapi_app without train_model having ran.
 # In cases wherein the 'app.py', 'dockerfile' and 'requirements.txt' have changed, but the 
 # ML model pkl did not change, and the FastAPI app Docker image requires to be rebuilt and 
