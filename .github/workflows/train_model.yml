@@ -4,7 +4,7 @@
 name: Train ML Model
 
 on:
-  pull_request:
+  push:
     branches:
       - develop
     paths:
@@ -43,11 +43,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [pre-deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged == true }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'push' }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Ensure full repo is cloned
 
@@ -86,7 +86,7 @@ jobs:
             git fetch origin
             dvc init
             git commit -m "initialise dvc tracking"
-            git push
+            # git push
           fi
 
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
@@ -130,13 +130,20 @@ jobs:
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
           dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
           dvc push && echo "CP10"
-          git commit -a -m "update new dvc configurations" --quiet && echo "CP11"
-          git push --quiet && echo "CP12"
+        #  git commit -a -m "update new dvc configurations" --quiet && echo "CP11"
+        #  git push --quiet && echo "CP12"
 
-  call-workflow:
-    needs: [pre-deploy, ML-Model-Training]
-    if: ${{ needs.ML-Model-Training.result == 'success' }}
-    uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
-    with:
-      skip_confirmation: 'true'
-    secrets: inherit
+      - name: Generate Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            [create-pull-request] automated change from train_model workflow
+
+  #call-workflow:
+  #  needs: [pre-deploy, ML-Model-Training]
+  #  if: ${{ needs.ML-Model-Training.result == 'success' }}
+  #  uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
+  #  with:
+  #    skip_confirmation: 'true'
+  #  secrets: inherit
+
