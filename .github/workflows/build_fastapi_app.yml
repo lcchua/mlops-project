@@ -5,6 +5,11 @@ on:
   pull_request:
     branches:
       - develop
+    types: [closed]
+  workflow_run:
+    workflows: ["Traing ML Model"]
+    types:
+      - completed
   #  paths:
   #    - 'main.py'
   #    - 'config.yml'
