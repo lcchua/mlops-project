@@ -15,7 +15,7 @@ on:
 # In cases wherein the 'app.py', 'dockerfile' and 'requirements.txt' have changed, but the 
 # ML model pkl did not change, and the FastAPI app Docker image requires to be rebuilt and 
 # pushed into ECR.branch_protection_rule.branch_protection_rule.
-# Note that the dummy 'trigger_buildapp.txt' can be added or modified to trigger this workflow for testing purpose.
+# Note that the dummy 'trigger_develop.txt' can be added or modified to trigger this workflow for testing purpose.
   workflow_dispatch:
     inputs:
       confirm:
