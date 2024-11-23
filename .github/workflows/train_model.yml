@@ -12,7 +12,7 @@ on:
       - 'config.yml'
       - 'steps/*.py'
       - 'requirements.txt'
-      - 'trigger_training.py'
+      - 'trigger_develop.py'
   workflow_dispatch:
     inputs:
       confirm:
@@ -137,7 +137,10 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           commit-message: |
-            [create-pull-request] automated change from train_model workflow
+            [create-pull-request] Automated change by train_model.yml
+          title: |
+            Changes by create-pr action - train_model workflow
+          delete-branch: true
 
   #call-workflow:
   #  needs: [pre-deploy, ML-Model-Training]
