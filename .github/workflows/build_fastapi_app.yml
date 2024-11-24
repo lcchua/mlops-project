@@ -6,10 +6,16 @@ on:
     branches:
       - develop
     types: [closed]
-  workflow_run:
-    workflows: ["Train ML Model"]
-    types:
-      - completed
+#
+# Do not automatically trigger this workflow until approval
+# is performed on a pull_request review process of the newly
+# trained ML model .pkl file.
+# This block is kept for future reference only.
+  #workflow_run:
+  #  workflows: ["Train ML Model"]
+  #  types:
+  #    - completed
+#
 # Aletrnative trigger condition : In case of having to run 
 # build_fastapi_app without train_model having ran.
 # In cases wherein the 'app.py', 'dockerfile' and 
