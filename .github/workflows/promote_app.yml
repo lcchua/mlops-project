@@ -6,13 +6,8 @@ name: Promote Tested App Image
 on:
   pull_request:
     branches:
-      - main
-    paths:
-      - 'requirements.txt'
-      - 'app.py'
-      - 'dockerfile'
-      - 'models/*.pkl.dvc'
-      - 'data/*.csv.dvc'
+      - 'UAT_Rel*'
+      - 'PRD_Rel*'
   workflow_dispatch:
     inputs:
       confirm:

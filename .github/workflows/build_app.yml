@@ -6,13 +6,13 @@ on:
     types:
       - closed
     branches:
-      - develop
+      - main
     paths:
-      - 'main.py'
-      - 'config.yml'
-      - 'steps/*.py'
       - 'requirements.txt'
-      - 'trigger_test.py' # meant to trigger-test this workflow
+      - 'app.py'
+      - 'dockerfile'
+      - 'models/*.pkl.dvc'
+      - 'data/*.csv.dvc'
 #
 # Do not automatically trigger this workflow until approval
 # is performed on a pull_request review process of the newly
