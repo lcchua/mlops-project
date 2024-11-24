@@ -7,12 +7,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'requirements.txt'
-      - 'app.py'
-      - 'dockerfile'
-      - 'models/*.pkl.dvc'
-      - 'data/*.csv.dvc'
   workflow_dispatch:
     inputs:
       confirm:
