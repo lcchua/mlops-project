@@ -8,15 +8,11 @@ on:
     branches:
       - main
     paths:
-      - 'main.py'
-      - 'config.yml'
-      - 'steps/*.py'
       - 'requirements.txt'
       - 'app.py'
       - 'dockerfile'
       - 'models/*.pkl.dvc'
       - 'data/*.csv.dvc'
-      - 'trigger_test.py' # meant to trigger-test this workflow
   workflow_dispatch:
     inputs:
       confirm:

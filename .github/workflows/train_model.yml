@@ -137,16 +137,16 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           commit-message: |
-            [create-pull-request] Automated change by train_model.yml
+            [create-pr] Automated dvc/git changes in train_model workflow
           title: |
-            Changes by create-pr action - train_model workflow
+            Changes in dvc/git by create-pr action in train_model workflow 
           delete-branch: true
 
   # Call-workflow block is no longer in use but kept for reference only.
   #call-workflow:
   #  needs: [pre-deploy, ML-Model-Training]
   #  if: ${{ needs.ML-Model-Training.result == 'success' }}
-  #  uses: lcchua/mlops-project/.github/workflows/build_fastapi_app.yml@main
+  #  uses: lcchua/mlops-project/.github/workflows/build_app.yml@main
   #  with:
   #    skip_confirmation: 'true'
   #  secrets: inherit
