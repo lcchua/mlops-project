@@ -3,10 +3,10 @@ name: Build Docker App Image
 
 on:
   pull_request:
-  #  types:
-  #    - closed
+    types:
+      - closed
     branches:
-      - develop
+      - main
     paths:
       - 'requirements.txt'
       - 'app.py'
