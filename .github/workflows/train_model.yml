@@ -108,8 +108,14 @@ jobs:
       - name: Test the trained model
         run: python3 -m pytest
 
-    # If are to add ML model scanning, then insert the action step here 
-
+    # Scan the trained ML Model
+      - name: Install Protectai Modelscan
+        run: pip install modelscan
+      - name: Modelscan trained Model
+        run: modelscan -p models/model.pkl
+        continue-on-error: true
+    
+    # Get the latest Git release tag
       - name: Fetch all tags to get the latest
         id: get_latest_tag
         run: |
@@ -117,6 +123,7 @@ jobs:
           echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> "$GITHUB_OUTPUT"
           echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
 
+    # Update the ML model and dataset version control metadata
       - name: Version ML and Git artefacts
         run: |
           git fetch origin
@@ -128,10 +135,7 @@ jobs:
           dvc add models/model.pkl && echo "CP6"
           git add models/model.pkl.dvc models/.gitignore && echo "CP7"
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
-          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
-          dvc push && echo "CP10"
-        #  git commit -a -m "update new dvc configurations" --quiet && echo "CP11"
-        #  git push --quiet && echo "CP12"
+          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"ßß
 
       - name: Generate Pull Request
         uses: peter-evans/create-pull-request@v7
@@ -142,7 +146,8 @@ jobs:
             Update dvc git configuration 
           delete-branch: true
 
-  # Call-workflow block is no longer in use but kept for reference only.
+# 
+  # This call-workflow block is no longer in use but kept for reference only.
   #call-workflow:
   #  needs: [pre-deploy, ML-Model-Training]
   #  if: ${{ needs.ML-Model-Training.result == 'success' }}
