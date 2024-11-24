@@ -6,6 +6,12 @@ on:
     branches:
       - develop
     types: [closed]
+    paths:
+      - 'main.py'
+      - 'config.yml'
+      - 'steps/*.py'
+      - 'requirements.txt'
+      - 'trigger_test.py' # meant to trigger-test this workflow
 #
 # Do not automatically trigger this workflow until approval
 # is performed on a pull_request review process of the newly
@@ -17,7 +23,7 @@ on:
   #    - completed
 #
 # Aletrnative trigger condition : In case of having to run 
-# build_fastapi_app without train_model having ran.
+# build_app without train_model having ran.
 # In cases wherein the 'app.py', 'dockerfile' and 
 # 'requirements.txt' have changed but the ML model pkl file
 # did not change, so the FastAPI app Docker image needs
@@ -35,7 +41,7 @@ on:
           - 'y'
           - 'n'
 # Condition 2: Whenver train_model runs successfully, 
-# it calls build_fastapi_app to run too.
+# it calls build_app to run too.
 #  workflow_call:
 #    inputs:
 #      skip_confirmation:
