@@ -6,8 +6,8 @@ name: Promote Tested App Image
 on:
   pull_request:
     branches:
-      - 'UAT_Rel*'
-      - 'PRD_Rel*'
+      - 'UAT-Rel*'
+      - 'PRD-Rel*'
   workflow_dispatch:
     inputs:
       confirm:
