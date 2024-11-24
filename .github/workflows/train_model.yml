@@ -137,9 +137,9 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           commit-message: |
-            [create-pr] Automated dvc/git changes in train_model workflow
+            [create-pr] Automated dvc git changes in train_model workflow
           title: |
-            Changes in dvc/git by create-pr action in train_model workflow 
+            Update dvc git configuration 
           delete-branch: true
 
   # Call-workflow block is no longer in use but kept for reference only.

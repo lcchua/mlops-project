@@ -3,9 +3,10 @@ name: Build Docker App Image
 
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - develop
-    types: [closed]
     paths:
       - 'main.py'
       - 'config.yml'
@@ -40,8 +41,9 @@ on:
         options:
           - 'y'
           - 'n'
-# Condition 2: Whenver train_model runs successfully, 
-# it calls build_app to run too.
+# Previous conditional event trigger:
+# Whenver train_model runs successfully, it calls build_app to run too.
+# This is no longer used, kept for furture reference only.
 #  workflow_call:
 #    inputs:
 #      skip_confirmation:
