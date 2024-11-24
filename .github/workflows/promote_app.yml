@@ -4,6 +4,19 @@
 name: Promote Tested App Image
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'main.py'
+      - 'config.yml'
+      - 'steps/*.py'
+      - 'requirements.txt'
+      - 'app.py'
+      - 'dockerfile'
+      - 'models/*.pkl.dvc'
+      - 'data/*.csv.dvc'
+      - 'trigger_test.py' # meant to trigger-test this workflow
   workflow_dispatch:
     inputs:
       confirm:
@@ -16,7 +29,7 @@ on:
           - 'n'
 
 jobs:
-  pre-deploy:
+  Pre-Deploy:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
@@ -25,10 +38,17 @@ jobs:
     name: Promote Docker App Image
     runs-on: ubuntu-latest
     environment: nonprod
-    needs: [pre-deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }}
+    needs: [Pre-Deploy]
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged }}
 
     steps:
+      - name: Conditional check to promote only if DVC exists
+        run: |
+          if ! [ -f "models/*.pkl.dvc" && -f "data/*.csv.dvc" ]; then
+            echo "DVC does not exists so no promotion required."
+            exit 78
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v2
         with:

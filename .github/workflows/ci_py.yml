@@ -11,15 +11,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  pre-deploy:
+  Pre-Deploy:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
 
-  flake8-linting:
+  Flake8-Linting:
     name: Flake8 linter
     runs-on: ubuntu-latest
-    needs: [pre-deploy]
+    needs: [Pre-Deploy]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
@@ -42,10 +42,10 @@ jobs:
           max-line-length: 100
           update-pip: true
 
-  black-formatting:
+  Black-Formatting:
     name: Black formatter
     runs-on: ubuntu-latest
-    needs: [pre-deploy]
+    needs: [Pre-Deploy]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,9 +55,9 @@ jobs:
         with:
           options: "--check --verbose"
 
-  python-code-scan:
+  Python-Code-Scan:
     runs-on: ubuntu-latest
-    needs: [pre-deploy]
+    needs: [Pre-Deploy]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
