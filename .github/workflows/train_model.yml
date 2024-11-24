@@ -12,7 +12,7 @@ on:
       - 'config.yml'
       - 'steps/*.py'
       - 'requirements.txt'
-      - 'trigger_develop.py'
+      - 'trigger_test.py' # meant to trigger-test this workflow
   workflow_dispatch:
     inputs:
       confirm:
@@ -33,7 +33,7 @@ env:
   GIT_USEREMAIL: laichwang@gmail.com
 
 jobs:
-  pre-deploy:
+  Pre-Deploy:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
@@ -42,7 +42,7 @@ jobs:
     name: Train or Retrain ML Model
     runs-on: ubuntu-latest
     environment: nonprod
-    needs: [pre-deploy]
+    needs: [Pre-Deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'push' }}
 
     steps:
@@ -142,6 +142,7 @@ jobs:
             Changes by create-pr action - train_model workflow
           delete-branch: true
 
+  # Call-workflow block is no longer in use but kept for reference only.
   #call-workflow:
   #  needs: [pre-deploy, ML-Model-Training]
   #  if: ${{ needs.ML-Model-Training.result == 'success' }}

@@ -1,18 +1,21 @@
 # Run CD workflow for Terraform on workflow_dispatch.
 # Note that the AWS S3 and ECR resources are deployed one-time and are
 # commonly used and shared across nonprod and prod environments: 
-#   a) The S3 bucket is only used in nonprod for version control metadata 
-#      storage of the ML models under 's3://ce7-grp-1-bucket/DVC_artefacts/' folder
-#      and the training datasets under 's3://ce7-grp-1-bucket/new_ML_data/' folder.
-#   b) The ECR is deployed with 2 private repos for nonprod and prod deployments - 
+#   a) The S3 bucket is only used in nonprod for:
+#       i)  DVC version control metadata storage of the ML models under
+#           'ce7-grp-1-bucket/DVC_artefacts' folder, and 
+#       ii) the .CSV training datasets under 'ce7-grp-1-bucket/new_ML_data'
+#           folder.
+#   b) The ECR is deployed with 2 private repos 
+#      for nonprod and prod deployments - 
 #        i.  'ce7-grp-1-bucket/nonprod/predict_buy_app'
 #        ii. 'ce7-grp-1-bucket/prod/predict_buy_app'.
 name: CD Terraform
 
 on:
-  # As the S3/ECR infrastructure deployments are one-time
-  # and "as-and-when-needed", this workflow is executed 
-  # on-demand or after ci_tf.yml workflow has completed successfully.
+  # As the S3/ECR infrastructure deployments are one-off and 
+  # "as-and-when-needed", this workflow is executed on-demand or 
+  # after ci_tf.yml workflow has completed successfully.
   workflow_dispatch:
     inputs:
       confirm:
@@ -30,20 +33,19 @@ on:
     types:
       - completed
     branches:
-      - main
       - develop
 
 jobs:
-  pre-deploy:
+  Pre-Deploy:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
       
-  on-success:
+  On-Success:
     name: Terraform CD
     runs-on: ubuntu-latest
     environment: nonprod
-    needs: [pre-deploy]
+    needs: [Pre-Deploy]
     defaults:
       run:
         working-directory: terraform
@@ -72,9 +74,9 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-  on-failure:
+  On-Failure:
     runs-on: ubuntu-latest
-    needs: [pre-deploy]
+    needs: [Pre-Deploy]
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
       - run: echo 'Failure in CI Terraform workflow hence CD Terraform cannot run'

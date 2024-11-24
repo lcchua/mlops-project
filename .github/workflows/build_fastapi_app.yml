@@ -10,17 +10,14 @@ on:
     workflows: ["Train ML Model"]
     types:
       - completed
-  #  paths:
-  #    - 'main.py'
-  #    - 'config.yml'
-  #    - 'steps/*.py'
-  #    - 'requirements.txt'
-  #    - 'trigger_develop.py'
-# Condition 1: In case of having to run build_fastapi_app without train_model having ran.
-# In cases wherein the 'app.py', 'dockerfile' and 'requirements.txt' have changed, but the 
-# ML model pkl did not change, and the FastAPI app Docker image requires to be rebuilt and 
-# pushed into ECR.branch_protection_rule.branch_protection_rule.
-# Note that the dummy 'trigger_develop.txt' can be added or modified to trigger this workflow for testing purpose.
+# Aletrnative trigger condition : In case of having to run 
+# build_fastapi_app without train_model having ran.
+# In cases wherein the 'app.py', 'dockerfile' and 
+# 'requirements.txt' have changed but the ML model pkl file
+# did not change, so the FastAPI app Docker image needs
+# to be rebuilt and pushed into ECR.
+# Note that the dummy 'trigger_test.txt' can be added or 
+# modified to trigger this workflow for testing purpose.
   workflow_dispatch:
     inputs:
       confirm:
@@ -31,7 +28,8 @@ on:
         options:
           - 'y'
           - 'n'
-# Condition 2: Whenver train_model runs successfully, it calls build_fastapi_app to run too.
+# Condition 2: Whenver train_model runs successfully, 
+# it calls build_fastapi_app to run too.
 #  workflow_call:
 #    inputs:
 #      skip_confirmation:
@@ -41,7 +39,7 @@ on:
 permissions: write-all
 
 jobs:
-  pre-deploy:
+  Pre-Deploy:
     runs-on: ubuntu-latest
     steps:
       - run: echo "This job is automatically triggered by a ${{ github.event_name }} event."
@@ -51,9 +49,12 @@ jobs:
     name: Build and Push
     runs-on: ubuntu-latest
     environment: nonprod
-    needs: [pre-deploy]
-  #  if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event_name == 'workflow_call' && inputs.skip_confirmation == 'true' }}
+    needs: [Pre-Deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged }}
+  # This workflow_call conidition check is no longer in use - 
+  #     ${{ github.event_name == 'workflow_call' && 
+  #         inputs.skip_confirmation == 'true' }}
+  # but just kept for reference only.
 
     steps:
       - name: Checkout Code
