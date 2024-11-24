@@ -112,7 +112,7 @@ jobs:
       - name: Install Protectai Modelscan
         run: pip install modelscan
       - name: Modelscan trained Model
-        run: modelscan -p models/model.pkl
+        run: modelscan --path models/model.pkl --report-format json --show-skipped --log CRITICAL
         continue-on-error: true
     
     # Get the latest Git release tag
