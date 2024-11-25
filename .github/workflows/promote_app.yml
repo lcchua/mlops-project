@@ -14,6 +14,7 @@ on:
       - app.py
       - requirements.txt
       - dockerfile
+      - 'trigger_test.py' # meant to trigger-test this workflow
   workflow_dispatch:
     inputs:
       confirm:
