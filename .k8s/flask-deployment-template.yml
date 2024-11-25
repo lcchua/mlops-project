@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flaskservice
+  name: fast-api-deployment
   namespace: <EKS_NAMESPACE> # kube-system
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flaskservice
+      app: fast-api-deployment
   template:
     metadata:
       labels:
-        app: flaskservice
+        app: fast-api-deployment
     spec:
       containers:
-      - name: flaskservice
+      - name: fast-api-deployment
         image: <PUBLIC_ECR_AWS>
         ports:
         - containerPort: 80
@@ -24,12 +24,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-react-app
+  name: fast-api-service
   namespace: <EKS_NAMESPACE>
 spec:
   type: NodePort
   selector:
-    app: flaskservice
+    app: fast-api-deployment
   ports:
     - protocol: TCP
       port: 80

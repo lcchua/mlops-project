@@ -16,8 +16,8 @@ on:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  EKS_CLUSTER: ${{ secrets.EKS_CLUSTER }}
-  EKS_REGION: ${{ secrets.EKS_REGION }}
+  EKS_CLUSTER: ${{ vars.EKS_CLUSTER }}
+  EKS_REGION: ${{ vars.EKS_REGION }}
   
 jobs:
   deploy:
@@ -33,16 +33,28 @@ jobs:
             path: AWS_ECR_TAG.txt
       
       - name: Replace skaffold.yml and flask deployment.yaml
-        # replace ECR path and namespace
+        # replace ECR path and namespace - skaffold require tag and repo uri to be separate
+        # but k8s deployment requires both repo uri and tag to be together 
         run: |
-          AWS_ECR_TAG=$(cat AWS_ECR_TAG.txt)
-          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml > ./.k8s/flask-deployment.yml
-          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./skaffold-template.yaml > ./skaffold.yaml
+          
           if [["${{github.event.inputs.branch == 'develop'}}" || ${{github.ref == 'develop'}}]]; then
             EKS_NAMESPACE=$('dev')
+            IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
+            AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }})
+            AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}\
+            ${{ vars.NONPROD_IMAGE_NAME }}:latest)
+            
           elif [["${{github.event.inputs.branch == 'main'}}" || ${{github.ref == 'main'}}]]; then
             EKS_NAMESPACE=$('prod')
+            IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
+            AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }})
+            AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}\
+            ${{ vars.NONPROD_IMAGE_NAME }}:latest)
+
           fi
+          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml > ./.k8s/flask-deployment.yml
+          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_REG/g" ./skaffold-template.yaml > ./skaffold.yaml
+          sed -i "s/<IMAGE_TAG>/$IMAGE_TAG/g" ./skaffold-template.yaml > ./skaffold.yaml
           echo "EKS_NAMESPACE=$EKS_NAMESPACE" >> $GITHUB_ENV
           sed -i "s/<EKS_NAMESPACE>/$EKS_NAMESPACE/g" ./.k8s/flask-deployment.yml
 
@@ -99,11 +111,11 @@ jobs:
       - name: Build and then deploy to EKS cluster with Skaffold
         run: skaffold run
       # Replace the hostname of ingress service with load balancer address
-      - name: Replace the hostname of ingress service with load balancer address
-        run: |
-            LB_HOST=$(kubectl get svc nginx-ingress-ingress-nginx-controller -n kube-system -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-            sed -i 's/<ENDPOINT>/$LB_HOST' ./.k8s/ngix-ingress-template.yaml > ./.k8s/ngix-ingress.yaml
-            kubectl apply -f ./.k8s/ngix-ingress.yaml
+      # - name: Replace the hostname of ingress service with load balancer address
+      #   run: |
+      #       LB_HOST=$(kubectl get svc nginx-ingress-ingress-nginx-controller -n kube-system -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+      #       sed -i 's/<ENDPOINT>/$LB_HOST' ./.k8s/ngix-ingress-template.yaml > ./.k8s/ngix-ingress.yaml
+      #       kubectl apply -f ./.k8s/ngix-ingress.yaml
       
 
       # Verify deployment

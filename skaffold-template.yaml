@@ -2,6 +2,10 @@ apiVersion: skaffold/v3
 kind: Config
 
 build:
+  build:
+  tagPolicy:
+    envTemplate:
+      template: <IMAGE_TAG>
   artifacts:
     - image: <PUBLIC_ECR_AWS>
       context: .
