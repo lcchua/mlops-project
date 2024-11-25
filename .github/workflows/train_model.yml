@@ -6,7 +6,7 @@ name: Train ML Model
 on:
   push:
     branches:
-      - feature*
+      - feature
     paths:
       - 'main.py'
       - 'config.yml'
@@ -136,8 +136,9 @@ jobs:
           git add models/model.pkl.dvc models/.gitignore && echo "CP7"
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
           dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
-          git commit -a -m "update dvc configuration" && echo "CP10"
-          git push && echo "CP11"
+          git commit .dvc/config -m "update dvc configuration" && echo "CP10"
+          dvc push && echo "CP11"
+          git push && echo "CP12"
 
 #      - name: Generate Pull Request
 #        uses: peter-evans/create-pull-request@v7
