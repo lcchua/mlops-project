@@ -1,0 +1,111 @@
+name: 'Build & Deploy to EKS'
+on:
+    # pull_request:
+    #     branches: ["main"]
+    workflow_dispatch:
+        inputs:
+            confirm:
+                description: "Deploy application to EKS cluster? (y/n)"
+                required: true
+                default: 'n'
+                type: choice
+                options:
+                    - 'y'
+                    - 'n'
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  EKS_CLUSTER: ${{ secrets.EKS_CLUSTER }}
+  EKS_REGION: ${{ secrets.EKS_REGION }}
+  
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+            name: AWS_ECR_TAG
+            path: AWS_ECR_TAG.txt
+      
+      - name: Replace skaffold.yml and flask deployment.yaml
+        # replace ECR path and namespace
+        run: |
+          AWS_ECR_TAG=$(cat AWS_ECR_TAG.txt)
+          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml > ./.k8s/flask-deployment.yml
+          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./skaffold-template.yaml > ./skaffold.yaml
+          if [["${{github.event.inputs.branch == 'develop'}}" || ${{github.ref == 'develop'}}]]; then
+            EKS_NAMESPACE=$('dev')
+          elif [["${{github.event.inputs.branch == 'main'}}" || ${{github.ref == 'main'}}]]; then
+            EKS_NAMESPACE=$('prod')
+          fi
+          echo "EKS_NAMESPACE=$EKS_NAMESPACE" >> $GITHUB_ENV
+          sed -i "s/<EKS_NAMESPACE>/$EKS_NAMESPACE/g" ./.k8s/flask-deployment.yml
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+         python-version: '3.12'
+         cache: 'pip'
+      - run: pip install -r ./backend/requirements.txt
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with: 
+            # parameters of configure aws credentials
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+            aws-region: us-east-1
+      
+    
+      # Install kubectl
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+          echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+
+
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          kubectl version --client
+      # Install Skaffold
+      - name: Install Skaffold
+        run: |
+          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+          sudo install skaffold /usr/local/bin/
+          skaffold version
+      # Cache skaffold image builds & config
+      - name: Cache skaffold image builds & config
+        uses: actions/cache@v2
+        with:
+          path: ~/.skaffold/
+          key: fixed-${{ github.sha }}
+      # Check AWS version and configure profile
+      - name: Check AWS version
+        run: |
+          aws --version
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region $EKS_REGION
+          aws sts get-caller-identity
+      # Connect to EKS cluster
+      - name: Connect to EKS cluster 
+        run: aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER
+      # Build and deploy to EKS cluster - exclude the ingress service
+      - name: Build and then deploy to EKS cluster with Skaffold
+        run: skaffold run
+      # Replace the hostname of ingress service with load balancer address
+      - name: Replace the hostname of ingress service with load balancer address
+        run: |
+            LB_HOST=$(kubectl get svc nginx-ingress-ingress-nginx-controller -n kube-system -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+            sed -i 's/<ENDPOINT>/$LB_HOST' ./.k8s/ngix-ingress-template.yaml > ./.k8s/ngix-ingress.yaml
+            kubectl apply -f ./.k8s/ngix-ingress.yaml
+      
+
+      # Verify deployment
+      - name: Verify the deployment
+        run: kubectl get pods

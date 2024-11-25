@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaskservice
+  namespace: <EKS_NAMESPACE> # kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaskservice
+  template:
+    metadata:
+      labels:
+        app: flaskservice
+    spec:
+      containers:
+      - name: flaskservice
+        image: <PUBLIC_ECR_AWS>
+        ports:
+        - containerPort: 80
+        
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-react-app
+  namespace: <EKS_NAMESPACE>
+spec:
+  type: NodePort
+  selector:
+    app: flaskservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  

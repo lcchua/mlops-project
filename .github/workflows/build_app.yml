@@ -130,7 +130,7 @@ jobs:
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        run: | # The first command below runs in quiet mode to untag the latest tag 
+        run: | # The first command below runs in quiet mode to untag the latest tag # export the ECR path to be used for deployment
           aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} \
             --image-ids imageTag=latest 2>/dev/null
           docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
@@ -139,6 +139,16 @@ jobs:
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
+          
+          AWS_ECR_TAG=$(${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest)
+          echo "$AWS_ECR_TAG" > AWS_ECR_TAG.txt
+      
+      # upload the artifact containing latest ecr path - required for deployment
+      - name: Upload Artifact - ECR path
+        uses: actions/upload-artifact@v2
+        with:
+          name: AWS_ECR_TAG
+          path: AWS_ECR_TAG.txt
 
       # Snyk scan the Docker image
       - name: Install Snyk CLI
@@ -164,3 +174,5 @@ jobs:
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
         run: |
           docker push ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
+          
+          
