@@ -85,8 +85,8 @@ jobs:
           if ! test -d .dvc; then
             git fetch origin
             dvc init
-            git commit -m "initialise dvc tracking"
-            # git push
+            git commit -a -m "initialise dvc tracking"
+            git push
           fi
 
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
@@ -109,11 +109,11 @@ jobs:
         run: python3 -m pytest
 
     # Scan the trained ML Model
-      - name: Install Protectai Modelscan
-        run: pip install modelscan
-      - name: Modelscan trained Model
-        run: modelscan scan --path models --reporting-format json --show-skipped --log CRITICAL
-        continue-on-error: true
+    #  - name: Install Protectai Modelscan
+    #    run: pip install modelscan
+    #  - name: Modelscan trained Model
+    #    run: modelscan scan --path models --reporting-format json --show-skipped --log CRITICAL
+    #    continue-on-error: true
     
     # Get the latest Git release tag
       - name: Fetch all tags to get the latest

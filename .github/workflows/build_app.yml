@@ -106,6 +106,8 @@ jobs:
             echo "A ML Model is already existing in the 'models' sub-directory!"
           else
             git fetch origin
+            git status
+            dvc doctor
             dvc pull models/model.pkl
           fi
 
