@@ -6,7 +6,7 @@ name: Train ML Model
 on:
   push:
     branches:
-      - develop
+      - feature*
     paths:
       - 'main.py'
       - 'config.yml'
@@ -85,8 +85,8 @@ jobs:
           if ! test -d .dvc; then
             git fetch origin
             dvc init
-            git commit -m "initialise dvc tracking"
-            # git push
+            git commit -a -m "initialise dvc tracking"
+            git push
           fi
 
     # Last-committed datasets are saved in S3 'dvc_artefacts' folder for download
@@ -112,7 +112,7 @@ jobs:
       - name: Install Protectai Modelscan
         run: pip install modelscan
       - name: Modelscan trained Model
-        run: modelscan --path models/model.pkl --report-format json --show-skipped --log CRITICAL
+        run: modelscan scan --path models --reporting-format json --show-skipped --log CRITICAL
         continue-on-error: true
     
     # Get the latest Git release tag
@@ -135,24 +135,27 @@ jobs:
           dvc add models/model.pkl && echo "CP6"
           git add models/model.pkl.dvc models/.gitignore && echo "CP7"
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
-          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"ßß
+          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
+          git commit .dvc/config -m "update dvc configuration" && echo "CP10"
+          dvc push && echo "CP11"
+          git push && echo "CP12"
 
-      - name: Generate Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: |
-            [create-pr] Automated dvc git changes in train_model workflow
-          title: |
-            Update dvc git configuration 
-          delete-branch: true
+#      - name: Generate Pull Request
+#        uses: peter-evans/create-pull-request@v7
+#        with:
+#          commit-message: |
+#            [create-pr] Automated dvc git changes in train_model workflow
+#          title: |
+#            Update dvc git configuration 
+#          delete-branch: true
 
 # 
-  # This call-workflow block is no longer in use but kept for reference only.
-  #call-workflow:
-  #  needs: [pre-deploy, ML-Model-Training]
-  #  if: ${{ needs.ML-Model-Training.result == 'success' }}
-  #  uses: lcchua/mlops-project/.github/workflows/build_app.yml@main
-  #  with:
-  #    skip_confirmation: 'true'
-  #  secrets: inherit
-
+#  This call-workflow block is no longer in use but kept for reference only.
+#  call-workflow:
+#    needs: [Pre-Deploy, ML-Model-Training]
+#    if: ${{ needs.ML-Model-Training.result == 'success' }}
+#    uses: lcchua/mlops-project/.github/workflows/build_app.yml@main
+#    with:
+#      skip_confirmation: 'true'
+#    secrets: inherit
+ 

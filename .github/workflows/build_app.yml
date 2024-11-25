@@ -2,28 +2,18 @@
 name: Build Docker App Image
 
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
-    paths:
-      - 'requirements.txt'
-      - 'app.py'
-      - 'dockerfile'
-      - 'models/*.pkl.dvc'
-      - 'data/*.csv.dvc'
+# Trigger condition 1: After completion of train_model workflow 
+# which builds a newly trained ML model, it also auto-generates 
+# a merge pr on develop branch which then triggers this workflow. 
+#  pull_request:
+#    types:
+#      - closed
+#    branches:
+#      - develop
+#    paths:
+#      - 'models/*.pkl.dvc'
 #
-# Do not automatically trigger this workflow until approval
-# is performed on a pull_request review process of the newly
-# trained ML model .pkl file.
-# This block is kept for future reference only.
-  #workflow_run:
-  #  workflows: ["Train ML Model"]
-  #  types:
-  #    - completed
-#
-# Aletrnative trigger condition : In case of having to run 
+# Trigger condition 2: In case of having to run 
 # build_app without train_model having ran.
 # In cases wherein the 'app.py', 'dockerfile' and 
 # 'requirements.txt' have changed but the ML model pkl file
@@ -41,14 +31,22 @@ on:
         options:
           - 'y'
           - 'n'
-# Previous conditional event trigger:
-# Whenver train_model runs successfully, it calls build_app to run too.
+# Trigger condition 3: Whenver train_model runs successfully, 
+# it calls build_app to run too.
 # This is no longer used, kept for furture reference only.
 #  workflow_call:
 #    inputs:
 #      skip_confirmation:
 #        required: true
 #        type: string
+# Trigger condition 4: This runs on the same 'feature*'' branch
+# as 'Train ML Model' workflow.
+  workflow_run:
+    workflows: ["Train ML Model"]
+    types:
+      - completed
+    branches:
+      - feature*
 
 permissions: write-all
 
@@ -64,10 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [Pre-Deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.workflow_run.conclusion == 'success' }}
   # This workflow_call conidition check is no longer in use - 
-  #     ${{ github.event_name == 'workflow_call' && 
-  #         inputs.skip_confirmation == 'true' }}
+  #     ${{ github.event.pull_request.merged }}
   # but just kept for reference only.
 
     steps:
@@ -108,6 +105,8 @@ jobs:
             echo "A ML Model is already existing in the 'models' sub-directory!"
           else
             git fetch origin
+            git status
+            dvc doctor
             dvc pull models/model.pkl
           fi
 
