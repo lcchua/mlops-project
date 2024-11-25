@@ -11,9 +11,9 @@ on:
       - main
     paths:
       - 'models/*.pkl.dvc'
-      - app.py
-      - requirements.txt
-      - dockerfile
+      - 'app.py'
+      - 'requirements.txt'
+      - 'dockerfile'
       - 'trigger_test.py' # meant to trigger-test this workflow
   workflow_dispatch:
     inputs:
