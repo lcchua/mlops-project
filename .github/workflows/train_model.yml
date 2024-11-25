@@ -135,7 +135,9 @@ jobs:
           dvc add models/model.pkl && echo "CP6"
           git add models/model.pkl.dvc models/.gitignore && echo "CP7"
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
-          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"ßß
+          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
+          git commit -m "update dvc configuration" && echo "CP10"
+          git push && echo "CP11"
 
       - name: Generate Pull Request
         uses: peter-evans/create-pull-request@v7
