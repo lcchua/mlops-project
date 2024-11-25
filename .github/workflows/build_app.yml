@@ -2,17 +2,16 @@
 name: Build Docker App Image
 
 on:
+# Trigger condition 1: After completion of train_model workflow 
+# which builds a newly trained ML model, it also auto-generates 
+# a merge pr on develop branch which then triggers this workflow. 
   pull_request:
     types:
       - closed
     branches:
-      - main
+      - develop
     paths:
-      - 'requirements.txt'
-      - 'app.py'
-      - 'dockerfile'
       - 'models/*.pkl.dvc'
-      - 'data/*.csv.dvc'
 #
 # Do not automatically trigger this workflow until approval
 # is performed on a pull_request review process of the newly
@@ -23,7 +22,7 @@ on:
   #  types:
   #    - completed
 #
-# Aletrnative trigger condition : In case of having to run 
+# Trigger condition 2: In case of having to run 
 # build_app without train_model having ran.
 # In cases wherein the 'app.py', 'dockerfile' and 
 # 'requirements.txt' have changed but the ML model pkl file
