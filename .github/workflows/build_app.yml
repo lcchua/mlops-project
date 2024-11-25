@@ -5,22 +5,13 @@ on:
 # Trigger condition 1: After completion of train_model workflow 
 # which builds a newly trained ML model, it also auto-generates 
 # a merge pr on develop branch which then triggers this workflow. 
-  pull_request:
-    types:
-      - closed
-    branches:
-      - develop
-    paths:
-      - 'models/*.pkl.dvc'
-#
-# Do not automatically trigger this workflow until approval
-# is performed on a pull_request review process of the newly
-# trained ML model .pkl file.
-# This block is kept for future reference only.
-  #workflow_run:
-  #  workflows: ["Train ML Model"]
-  #  types:
-  #    - completed
+#  pull_request:
+#    types:
+#      - closed
+#    branches:
+#      - develop
+#    paths:
+#      - 'models/*.pkl.dvc'
 #
 # Trigger condition 2: In case of having to run 
 # build_app without train_model having ran.
@@ -48,6 +39,15 @@ on:
 #      skip_confirmation:
 #        required: true
 #        type: string
+# Do not automatically trigger this workflow until approval
+# is performed on a pull_request review process of the newly
+# trained ML model .pkl file. This runs on the same 'feature*'' branch
+# as 'Train ML Model' workflow.
+# This block is kept for future reference only.
+  workflow_run:
+    workflows: ["Train ML Model"]
+    types:
+      - completed
 
 permissions: write-all
 
@@ -63,10 +63,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [Pre-Deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.workflow_run.conclusion == 'success' }}
   # This workflow_call conidition check is no longer in use - 
-  #     ${{ github.event_name == 'workflow_call' && 
-  #         inputs.skip_confirmation == 'true' }}
+  #     ${{ github.event.pull_request.merged }}
   # but just kept for reference only.
 
     steps:
