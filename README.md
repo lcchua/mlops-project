@@ -1,12 +1,19 @@
 # Insurance Cross Sell Prediction 🏠🏥
-[![GitHub](https://img.shields.io/badge/GitHub-code-blue?style=flat&logo=github&logoColor=white&color=red)](https://github.com/prsdm/mlops-project) [![Medium](https://img.shields.io/badge/Medium-view_article-green?style=flat&logo=medium&logoColor=white&color=green)](https://medium.com/@prasadmahamulkar/machine-learning-operations-mlops-for-beginners-a5686bfe02b2)
+[![GitHub](https://img.shields.io/badge/GitHub-code-blue?style=flat&logo=github&logoColor=white&color=red)](https://github.com/lcchua/mlops-project.git) Source Reference: [![Medium](https://img.shields.io/badge/Medium-view_article-green?style=flat&logo=medium&logoColor=white&color=green)](https://medium.com/@prasadmahamulkar/machine-learning-operations-mlops-for-beginners-a5686bfe02b2)
 
 Welcome to the Insurance Cross-Selling Prediction project! The goal of this project is to predict which customers are most likely to purchase additional insurance products using a machine learning model.
 
+## ML Pipeline
+![alt text](image-3.png)
 
-## Diagram
-Below is the architecture diagram that illustrates the flow of the project from data ingestion to model deployment:
-![Image](docs/mlops.jpg)
+## Capstone Project Overview
+![alt text](image.png)
+
+## DevOps / DevSecOps Workflows
+![alt text](image-1.png)
+
+## Adapted Branching Strategy
+![alt text](image-2.png)
 
 ## Get Started
 To get started with the project, follow the steps below:
@@ -14,10 +21,10 @@ To get started with the project, follow the steps below:
 #### 1. Clone the Repository
 Clone the project repository from GitHub:
 ```bash
-git clone https://github.com/prsdm/ml-project.git
+git clone https://github.com/lcchua/mlops-project.git
 ```
 ```bash
-cd ml-project
+cd mlops-project
 ```
 #### 2. Set Up the Environment
 Ensure you have Python 3.8+ installed. Create a virtual environment and install the necessary dependencies:
@@ -66,10 +73,7 @@ docker build -t my_fastapi .
 docker run -p 80:80 my_fastapi
 ```
 Once your Docker image is built, you can push it to Docker Hub, making it accessible for deployment on any cloud platform.
-#### 7. Monitor the Model
-Integrate Evidently AI to monitor the model for data drift and performance degradation:
-
-```bash
-run monitor.ipynb file
+#### 7. Push the Model to a Docker Image registry
+......
 ```
 
