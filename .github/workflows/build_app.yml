@@ -72,6 +72,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
+          ref: feature
           fetch-depth: 0 # Ensure full repo is cloned
 
       # Prepare the working environment
