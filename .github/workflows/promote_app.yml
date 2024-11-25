@@ -8,8 +8,7 @@ on:
     types:
       - closed
     branches:
-      - 'UAT-Rel*'
-      - 'PRD-Rel*'
+      - main
   workflow_dispatch:
     inputs:
       confirm:

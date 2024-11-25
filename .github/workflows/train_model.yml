@@ -6,7 +6,7 @@ name: Train ML Model
 on:
   push:
     branches:
-      - feature
+      - feature*
     paths:
       - 'main.py'
       - 'config.yml'
@@ -109,11 +109,11 @@ jobs:
         run: python3 -m pytest
 
     # Scan the trained ML Model
-    #  - name: Install Protectai Modelscan
-    #    run: pip install modelscan
-    #  - name: Modelscan trained Model
-    #    run: modelscan scan --path models --reporting-format json --show-skipped --log CRITICAL
-    #    continue-on-error: true
+      - name: Install Protectai Modelscan
+        run: pip install modelscan
+      - name: Modelscan trained Model
+        run: modelscan scan --path models --reporting-format json --show-skipped --log CRITICAL
+        continue-on-error: true
     
     # Get the latest Git release tag
       - name: Fetch all tags to get the latest

@@ -48,6 +48,8 @@ on:
     workflows: ["Train ML Model"]
     types:
       - completed
+    branches:
+      - feature*
 
 permissions: write-all
 
@@ -72,7 +74,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          ref: feature
           fetch-depth: 0 # Ensure full repo is cloned
 
       # Prepare the working environment
