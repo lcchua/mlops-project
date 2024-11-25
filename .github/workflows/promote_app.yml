@@ -9,6 +9,11 @@ on:
       - closed
     branches:
       - main
+    paths:
+      - 'models/*.pkl.dvc'
+      - app.py
+      - requirements.txt
+      - dockerfile
   workflow_dispatch:
     inputs:
       confirm:
