@@ -144,7 +144,7 @@ jobs:
       
       # upload the artifact containing latest ecr path - required for deployment
       - name: Upload Artifact - ECR path
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: AWS_ECR_TAG
           path: AWS_ECR_TAG.txt
