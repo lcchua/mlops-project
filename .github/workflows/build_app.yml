@@ -138,16 +138,6 @@ jobs:
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
-          
-          AWS_ECR_TAG=$(${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest)
-          echo "$AWS_ECR_TAG" > AWS_ECR_TAG.txt
-      
-      # upload the artifact containing latest ecr path - required for deployment
-      - name: Upload Artifact - ECR path
-        uses: actions/upload-artifact@v4
-        with:
-          name: AWS_ECR_TAG
-          path: AWS_ECR_TAG.txt
 
       # Snyk scan the Docker image
       - name: Install Snyk CLI
