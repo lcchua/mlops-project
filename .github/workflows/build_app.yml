@@ -88,8 +88,8 @@ jobs:
         run: pip install dvc[all]
       - name: Configure Git
         env:
-          GIT_USERNAME: lcchua
-          GIT_USEREMAIL: laichwang@gmail.com
+          GIT_USERNAME: HanKyung
+          GIT_USEREMAIL: infohk.286@gmail.com
         run: |
           git config --global user.name ${{ env.GIT_USERNAME }}
           git config --global user.email ${{ env.GIT_USEREMAIL }}
@@ -138,16 +138,6 @@ jobs:
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
-          
-          AWS_ECR_TAG=$(${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest)
-          echo "$AWS_ECR_TAG" > AWS_ECR_TAG.txt
-      
-      # upload the artifact containing latest ecr path - required for deployment
-      - name: Upload Artifact - ECR path
-        uses: actions/upload-artifact@v2
-        with:
-          name: AWS_ECR_TAG
-          path: AWS_ECR_TAG.txt
 
       # Snyk scan the Docker image
       - name: Install Snyk CLI
@@ -172,6 +162,6 @@ jobs:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
         run: |
-          docker push ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
+          docker push --all-tags ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}
           
           
