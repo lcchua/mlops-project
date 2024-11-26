@@ -56,23 +56,23 @@ jobs:
 
         run: |
           
-          if [[${{github.ref}} == 'develop']]; then
+          if [['${{github.ref}}' == 'refs/heads/develop']]; then
             EKS_NAMESPACE=$('dev')
             IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
             AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }})
             AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:latest)
             
-          elif [[${{github.ref}} == 'main']]; then
+          elif [['${{github.ref}}' == 'refs/heads/main']]; then
             EKS_NAMESPACE=$('prod')
             IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
             AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }})
             AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:latest)
 
           fi
-          echo $EKS_NAMESPACE
-          echo $IMAGE_TAG
-          echo $AWS_ECR_REG
-          echo $AWS_ECR_TAG
+          echo "$EKS_NAMESPACE"
+          echo "$IMAGE_TAG"
+          echo "$AWS_ECR_REG"
+          echo "$AWS_ECR_TAG"
           sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml
           sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_REG/g" ./skaffold.yaml
           sed -i "s/<IMAGE_TAG>/latest/g" ./skaffold.yaml
