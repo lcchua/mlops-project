@@ -39,7 +39,7 @@ jobs:
         with:
          python-version: '3.12'
          cache: 'pip'
-      - run: pip install -r ./backend/requirements.txt
+      - run: pip install -r ./requirements.txt
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
