@@ -122,6 +122,10 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region $EKS_REGION
           aws sts get-caller-identity
+      # login to ecr - skaffold will build and push image to repo too 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       # Connect to EKS cluster
       - name: Connect to EKS cluster 
         run: aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER
