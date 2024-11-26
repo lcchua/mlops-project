@@ -56,13 +56,13 @@ jobs:
 
         run: |
           
-          if [['${{github.ref}}' == 'refs/heads/develop']]; then
+          if [['${{ env.GITHUB_REF#refs/heads/ }}' == 'develop']]; then
             EKS_NAMESPACE=$('dev')
             IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
             AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }})
             AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:latest)
             
-          elif [['${{github.ref}}' == 'refs/heads/main']]; then
+          elif [['${{ env.GITHUB_REF#refs/heads/ }}' == 'main']]; then
             EKS_NAMESPACE=$('prod')
             IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
             AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }})
