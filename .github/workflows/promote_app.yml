@@ -41,6 +41,7 @@ jobs:
 
     steps:
       - name: Conditional check to promote only if DVC exists
+      # Exit code 78 is not an error; it is used to signal that a job or step was intentionally skipped.
         run: |
           if ! [ -f "models/*.pkl.dvc" && -f "data/*.csv.dvc" ]; then
             echo "DVC does not exists so no promotion required."
