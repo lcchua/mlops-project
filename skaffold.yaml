@@ -2,7 +2,6 @@ apiVersion: skaffold/v3
 kind: Config
 
 build:
-  build:
   tagPolicy:
     envTemplate:
       template: "<IMAGE_TAG>"
