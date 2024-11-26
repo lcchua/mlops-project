@@ -33,8 +33,44 @@ jobs:
       #       path: AWS_ECR_TAG.txt
       
       
-
+        
       - uses: actions/checkout@v4
+
+      - name: use non-prod values
+        if: env.GITHUB_REF == 'refs/heads/develop'
+        run: |
+            EKS_NAMESPACE=$('dev')
+            IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
+            AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }})
+            AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:latest)
+            
+      - name: use prod values
+        if: env.GITHUB_REF == 'refs/heads/main'
+        run: |
+            EKS_NAMESPACE=$('prod')
+            IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
+            AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }})
+            AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:latest)
+
+      - name: Replace skaffold.yml and flask deployment.yaml
+        # replace ECR path and namespace - skaffold require tag and repo uri to be separate
+        # but k8s deployment requires both repo uri and tag to be together 
+        # AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}\
+
+        run: |
+          echo "$EKS_NAMESPACE"
+          echo "$IMAGE_TAG"
+          echo "$AWS_ECR_REG"
+          echo "$AWS_ECR_TAG"
+          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml
+          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_REG/g" ./skaffold.yaml
+          sed -i "s/<IMAGE_TAG>/latest/g" ./skaffold.yaml
+          echo "EKS_NAMESPACE=$EKS_NAMESPACE" >> $GITHUB_ENV
+          sed -i "s/<EKS_NAMESPACE>/$EKS_NAMESPACE/g" ./.k8s/flask-deployment-template.yml
+
+          cat ./skaffold.yaml
+          cat ./.k8s/flask-deployment-template.yml
+      
       - uses: actions/setup-python@v5
         with:
          python-version: '3.12'
@@ -49,40 +85,7 @@ jobs:
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
             aws-region: us-east-1
             
-      - name: Replace skaffold.yml and flask deployment.yaml
-        # replace ECR path and namespace - skaffold require tag and repo uri to be separate
-        # but k8s deployment requires both repo uri and tag to be together 
-        # AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}\
-
-        run: |
-          
-          if [['${{ env.GITHUB_REF#refs/heads/ }}' == 'develop']]; then
-            EKS_NAMESPACE=$('dev')
-            IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
-            AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }})
-            AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.NONPROD_IMAGE_NAME }}:latest)
-            
-          elif [['${{ env.GITHUB_REF#refs/heads/ }}' == 'main']]; then
-            EKS_NAMESPACE=$('prod')
-            IMAGE_TAG=$(${{ env.VER_TAG }}.${{ github.run_number }}:latest)
-            AWS_ECR_REG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }})
-            AWS_ECR_TAG=$('255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:latest)
-
-          fi
-          echo "$EKS_NAMESPACE"
-          echo "$IMAGE_TAG"
-          echo "$AWS_ECR_REG"
-          echo "$AWS_ECR_TAG"
-          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml
-          sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_REG/g" ./skaffold.yaml
-          sed -i "s/<IMAGE_TAG>/latest/g" ./skaffold.yaml
-          echo "EKS_NAMESPACE=$EKS_NAMESPACE" >> $GITHUB_ENV
-          sed -i "s/<EKS_NAMESPACE>/$EKS_NAMESPACE/g" ./.k8s/flask-deployment-template.yml
-
-          cat ./skaffold.yaml
-          cat ./.k8s/flask-deployment-template.yml
       
-            
       # Install kubectl
       - name: Install kubectl
         run: |
