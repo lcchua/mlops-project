@@ -2,6 +2,7 @@
 name: Build Docker App Image
 
 on:
+# Not used currently but kept for future reference only.
 # Trigger condition 1: After completion of train_model workflow 
 # which builds a newly trained ML model, it also auto-generates 
 # a merge pr on develop branch which then triggers this workflow. 
@@ -63,9 +64,10 @@ jobs:
     environment: nonprod
     needs: [Pre-Deploy]
     if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.workflow_run.conclusion == 'success' }}
-  # This workflow_call conidition check is no longer in use - 
+  #
+  # This pull_request event trigger conditional check is no longer in use now but kept for future reference only.
   #     ${{ github.event.pull_request.merged }}
-  # but just kept for reference only.
+  #
 
     steps:
       - name: Checkout Code
@@ -87,12 +89,9 @@ jobs:
       - name: Install DVC
         run: pip install dvc[all]
       - name: Configure Git
-        env:
-          GIT_USERNAME: lcchua
-          GIT_USEREMAIL: laichwang@gmail.com
         run: |
-          git config --global user.name ${{ env.GIT_USERNAME }}
-          git config --global user.email ${{ env.GIT_USEREMAIL }}
+          git config --global user.name ${{ vars.GIT_USERNAME }}
+          git config --global user.email ${{ vars.GIT_USEREMAIL }}
 
       # Only pull from DVC the last-commited ML model if 
       # there is no model already exisiting locally in the event
