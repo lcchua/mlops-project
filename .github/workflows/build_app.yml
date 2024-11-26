@@ -88,8 +88,8 @@ jobs:
         run: pip install dvc[all]
       - name: Configure Git
         env:
-          GIT_USERNAME: lcchua
-          GIT_USEREMAIL: laichwang@gmail.com
+          GIT_USERNAME: HanKyung
+          GIT_USEREMAIL: infohk.286@gmail.com
         run: |
           git config --global user.name ${{ env.GIT_USERNAME }}
           git config --global user.email ${{ env.GIT_USEREMAIL }}
