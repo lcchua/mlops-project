@@ -26,11 +26,11 @@ jobs:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-            name: AWS_ECR_TAG
-            path: AWS_ECR_TAG.txt
+      # - name: Download Artifact
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #       name: AWS_ECR_TAG
+      #       path: AWS_ECR_TAG.txt
       
       - name: Replace skaffold.yml and flask deployment.yaml
         # replace ECR path and namespace - skaffold require tag and repo uri to be separate
