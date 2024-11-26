@@ -58,7 +58,7 @@ jobs:
           echo $AWS_ECR_TAG
           sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_TAG/g" ./.k8s/flask-deployment-template.yml
           sed -i "s/<PUBLIC_ECR_AWS>/$AWS_ECR_REG/g" ./skaffold.yaml
-          sed -i "s/<IMAGE_TAG>/latest/g" ./skaffold-template.yaml > ./skaffold.yaml
+          sed -i "s/<IMAGE_TAG>/latest/g" ./skaffold.yaml
           echo "EKS_NAMESPACE=$EKS_NAMESPACE" >> $GITHUB_ENV
           sed -i "s/<EKS_NAMESPACE>/$EKS_NAMESPACE/g" ./.k8s/flask-deployment-template.yml
 
