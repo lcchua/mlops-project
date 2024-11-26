@@ -162,6 +162,6 @@ jobs:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
         run: |
-          docker push --all-tags ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }} 
+          docker push --all-tags ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}
           
           
