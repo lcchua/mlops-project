@@ -39,18 +39,18 @@ jobs:
       - name: use non-prod values
         if: github.ref == 'refs/heads/develop'
         run: |
-            EKS_NAMESPACE=$("dev")
-            IMAGE_TAG=$("${{ env.VER_TAG }}.${{ github.run_number }}:latest")
-            AWS_ECR_REG=$("255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}")
-            AWS_ECR_TAG=$("255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:latest")
+            EKS_NAMESPACE="dev"
+            IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
+            AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}"
+            AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:latest"
             
       - name: use prod values
         if: github.ref == 'refs/heads/main'
         run: |
-            EKS_NAMESPACE=$("prod")
-            IMAGE_TAG=$("${{ env.VER_TAG }}.${{ github.run_number }}:latest")
-            AWS_ECR_REG=$("255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}")
-            AWS_ECR_TAG=$("255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:latest")
+            EKS_NAMESPACE="prod"
+            IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
+            AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}"
+            AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:latest"
 
       - name: Replace skaffold.yml and flask deployment.yaml
         # replace ECR path and namespace - skaffold require tag and repo uri to be separate
