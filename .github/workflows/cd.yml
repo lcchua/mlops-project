@@ -131,7 +131,7 @@ jobs:
         run: aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER
       # Build and deploy to EKS cluster - exclude the ingress service
       - name: Build and then deploy to EKS cluster with Skaffold
-        run: skaffold deploy --profile deploy
+        run: skaffold deploy
       # Replace the hostname of ingress service with load balancer address
       # - name: Replace the hostname of ingress service with load balancer address
       #   run: |
