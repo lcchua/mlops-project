@@ -5,7 +5,7 @@ build:
   build:
   tagPolicy:
     envTemplate:
-      template: <IMAGE_TAG>
+      template: "{{.IMAGE_TAG}}"
   artifacts:
     - image: <PUBLIC_ECR_AWS>
       context: .
