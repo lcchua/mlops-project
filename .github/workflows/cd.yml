@@ -39,6 +39,7 @@ jobs:
 
       - name: use non-prod values
         if: github.ref == 'refs/heads/develop'
+        #  sed -i "s/<IMAGE_TAG>/v3.0.0.7/g" ./skaffold.yaml
         run: |
             EKS_NAMESPACE="dev"
             IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
@@ -50,7 +51,6 @@ jobs:
             echo "$AWS_ECR_TAG"
             sed -i "s|<PUBLIC_ECR_AWS>|$AWS_ECR_TAG|g" ./.k8s/flask-deployment-template.yml
             sed -i "s|<PUBLIC_ECR_AWS>|$AWS_ECR_REG|g" ./skaffold.yaml
-            sed -i "s/<IMAGE_TAG>/v3.0.0.7/g" ./skaffold.yaml
             echo "EKS_NAMESPACE=$EKS_NAMESPACE" >> $GITHUB_ENV
             sed -i "s|<EKS_NAMESPACE>|$EKS_NAMESPACE|g" ./.k8s/flask-deployment-template.yml
             cat ./skaffold.yaml
