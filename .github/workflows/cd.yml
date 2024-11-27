@@ -18,6 +18,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   EKS_CLUSTER: ${{ vars.EKS_CLUSTER }}
   EKS_REGION: ${{ vars.EKS_REGION }}
+  IMAGE_TAG: "v3.0.0.7"
   
 jobs:
   deploy:
@@ -131,7 +132,7 @@ jobs:
         run: aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER
       # Build and deploy to EKS cluster - exclude the ingress service
       - name: Build and then deploy to EKS cluster with Skaffold
-        run: skaffold deploy --image 255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:v3.0.0.7
+        run: skaffold deploy
       # Replace the hostname of ingress service with load balancer address
       # - name: Replace the hostname of ingress service with load balancer address
       #   run: |
