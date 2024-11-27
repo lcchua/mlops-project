@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fastapi
+  labels:
+    name: fastapi
+spec:
+  containers:
+  - name: fastapi
+    image: 255945442255.dkr.ecr.us-east-1.amazonaws.com/ce7-grp-1/prod/predict_buy_app:latest
+    imagePullPolicy: Always
+    ports:
+      - containerPort: 80
+  imagePullSecrets:
+    - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-svc
+spec:
+  type: NodePort
+  selector:
+    name: fastapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30001
