@@ -6,13 +6,13 @@ on:
 # Trigger condition 1: After completion of train_model workflow 
 # which builds a newly trained ML model, it also auto-generates 
 # a merge pr on develop branch which then triggers this workflow. 
-#  pull_request:
-#    types:
-#      - closed
-#    branches:
-#      - develop
-#    paths:
-#      - 'models/*.pkl.dvc'
+  pull_request:
+    types:
+      - closed
+    branches:
+      - feature*
+    paths:
+      - 'models/*.pkl.dvc'
 #
 # Trigger condition 2: In case of having to run 
 # build_app without train_model having ran.
@@ -41,13 +41,14 @@ on:
 #        required: true
 #        type: string
 # Trigger condition 4: This runs on the same 'feature*'' branch
-# as 'Train ML Model' workflow.
-  workflow_run:
-    workflows: ["Train ML Model"]
-    types:
-      - completed
-    branches:
-      - feature*
+# as 'Train ML Model' workflow.Note an issue here is workflow_run
+# event is triggered only if the workflow file is on the default branch.
+#  workflow_run:
+#    workflows: ["Train ML Model"]
+#    types:
+#      - completed
+#    branches:
+#      - feature*
 
 permissions: write-all
 
@@ -63,10 +64,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [Pre-Deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged }}
   #
-  # This pull_request event trigger conditional check is no longer in use now but kept for future reference only.
-  #     ${{ github.event.pull_request.merged }}
+  # This pull_request event trigger conditional check is no longer 
+  # in use now but kept for future reference only
+  #   ${{ github.event.workflow_run.conclusion == 'success' }}
   #
 
     steps:
@@ -74,7 +76,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-          path: $GITHUB_WORKSPACE
           fetch-depth: 0 # Ensure full repo is cloned
 
       # Prepare the working environment
@@ -100,7 +101,6 @@ jobs:
       # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
         run: |
-          echo "Checkout path = $GITHUB_SPACE"
           echo "Checkout ref = ${{ github.ref }}"
           if [[ ! -d .dvc ]]; then
             echo "DVC is not initialised, .dvc directory does not exists"
