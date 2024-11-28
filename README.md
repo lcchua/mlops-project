@@ -11,7 +11,7 @@ Welcome to the Insurance Cross-Selling Prediction project! The goal of this proj
 ![alt text](image.png)
 
 ## DevOps / DevSecOps Workflows
-![image](https://github.com/user-attachments/assets/445cb972-d435-47e0-aec6-b9e6f8251101)
+![alt text](image-4.png)
 
 ## Adapted Branching Strategy
 ![alt text](image-2.png)
