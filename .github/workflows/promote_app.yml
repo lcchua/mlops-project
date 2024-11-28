@@ -77,7 +77,7 @@ jobs:
           LATEST_VER=$(aws ecr describe-images --repository ${{ env.NONPROD_REPO }} \
             --region ${{ env.AWS_REGION }} \
             --query "sort_by(imageDetails, &imagePushedAt)[-1].imageTags" --output text | \
-            grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+-[A-Z]{3}\.[0-9]+')
+            grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+-[A-Z]{3}')
           if [[ $LATEST_VER == "" ]]; then
             exit 1
           fi
