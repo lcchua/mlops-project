@@ -133,7 +133,7 @@ jobs:
           dvc remote add -d -f remote ${{ vars.ML_ARTEFACTS_S3 }} && echo "CP9"
           git commit .dvc/config -m "update dvc configuration" && echo "CP10"
           dvc push && echo "CP11"
-          git push && echo "CP12"
+      #    git push && echo "CP12"
 
 #
 # Some old script kept here for future reference only.
