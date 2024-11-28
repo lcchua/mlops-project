@@ -43,6 +43,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0 # Ensure full repo is cloned
 
       - name: Install Python
@@ -136,14 +137,15 @@ jobs:
 
 #
 # Some old script kept here for future reference only.
-#      - name: Generate Pull Request
-#        uses: peter-evans/create-pull-request@v7
-#        with:
-#          commit-message: |
-#            [create-pr] Automated dvc git changes in train_model workflow
-#          title: |
-#            Update dvc git configuration 
-#          delete-branch: true
+      - name: Generate Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            [create-pr] Automated dvc-git changes in train_model workflow
+          title: |
+            Update dvc git configuration 
+          delete-branch: true
+#
 
 # 
 #  This call-workflow block is no longer in use but kept for reference only.
