@@ -71,8 +71,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
+          path: $GITHUB_WORKSPACE
           fetch-depth: 0 # Ensure full repo is cloned
 
       # Prepare the working environment
@@ -98,6 +100,12 @@ jobs:
       # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
         run: |
+          echo "Checkout path = $GITHUB_SPACE"
+          echo "Checkout ref = ${{ github.ref }}"
+          if [[ ! -d .dvc ]]; then
+            echo "DVC is not initialised, .dvc directory does not exists"
+            exit 1
+          fi
           if [[ -f "models/model.pkl.dvc" && -f "models/model.pkl" ]]; then
             echo "A ML Model is already existing in the 'models' sub-directory!" 
           elif [[ -f "models/model.pkl" ]]; then
