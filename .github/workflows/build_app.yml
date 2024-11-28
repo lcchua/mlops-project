@@ -98,6 +98,10 @@ jobs:
       # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
         run: |
+          if [[ ! -d .dvc ]]; then
+            echo "DVC is not initialised, .dvc directory does not exists"
+            exit 1
+          fi
           if [[ -f "models/model.pkl.dvc" && -f "models/model.pkl" ]]; then
             echo "A ML Model is already existing in the 'models' sub-directory!" 
           elif [[ -f "models/model.pkl" ]]; then
