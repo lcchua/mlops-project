@@ -128,13 +128,11 @@ jobs:
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        run: | # The first command below runs in quiet mode to untag the latest tag 
-          aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} \
-            --image-ids imageTag=latest 2>/dev/null
-          docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-            -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
-          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
+        run: | # This 1st WS cmd runs in quiet mode to rmove latest tag
+          aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} --image-ids imageTag=latest 2>/dev/null
+          docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }} -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
+          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }} \
+            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
 
