@@ -68,7 +68,7 @@ jobs:
             git fetch --tags
             echo "CONTAINS_TAG=$(git describe --tags --contains ${{ env.IMAGE_TAG }})" >> $GITHUB_OUTPUT
       - name: parse search results
-        if: steps.match-tag.outputs.CONTAINS_TAG == "Could not get sha1 for ${{ env.IMAGE_TAG }}. Skipping"
+        if: steps.match-tag.outputs.CONTAINS_TAG == "Could not get sha1 for ${{ env.IMAGE_TAG }}. Skipping."
         run: |
             echo "Input tag or release version is not found in the repository commit history"
             exit 1
