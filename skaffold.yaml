@@ -2,7 +2,6 @@ apiVersion: skaffold/v3
 kind: Config
 
 build:
-  build:
   tagPolicy:
     envTemplate:
       template: "{{.IMAGE_TAG}}"
@@ -10,7 +9,7 @@ build:
     - image: <PUBLIC_ECR_AWS>
       context: .
       docker:
-        dockerfile: Dockerfile
+        dockerfile: dockerfile
      
       
 manifests:
