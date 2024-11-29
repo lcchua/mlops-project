@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stress-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stress
+  template:
+    metadata:
+      labels:
+        app: stress
+    spec:
+      containers:
+      - name: stress
+        image: polinux/stress
+        args:
+        - "stress"
+        - "--vm"
+        - "2"
+        - "--vm-bytes"
+        - "500M"
+        - "--vm-hang"
+        - "1"
+        - "--cpu"
+        - "4"
+        - "--timeout"
+        - "600s"
