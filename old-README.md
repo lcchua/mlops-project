@@ -4,17 +4,20 @@
 Welcome to the Insurance Cross-Selling Prediction project! The goal of this project is to predict which customers are most likely to purchase additional insurance products using a machine learning model.
 
 ## ML Pipeline
-![image](https://github.com/user-attachments/assets/9c202824-6b32-4c9d-b9b6-af09270bff2b)
-![image](https://github.com/user-attachments/assets/abc6aa2c-5ee7-4c09-8f9f-15807399a5b5)
+![Screenshot 2024-11-25 at 3 55 19 PM](https://github.com/user-attachments/assets/76a7a2b1-cbb7-42b9-ac47-7a02e7f73e2e)
+![Screenshot 2024-12-02 at 5 57 54 PM](https://github.com/user-attachments/assets/b1299a8f-4a25-49dd-84eb-97dbcde31310)
+
 
 ## Capstone Project Overview
-![alt text](image.png)
+![Screenshot 2024-12-02 at 5 52 40 PM](https://github.com/user-attachments/assets/018a89eb-9673-4d9c-9cee-b94349f56df4)
+
 
 ## DevOps / DevSecOps Workflows
-![alt text](image-4.png)
+![Screenshot 2024-11-28 at 4 50 01 PM](https://github.com/user-attachments/assets/5aca691f-dda0-4933-b529-e573b3198c4f)
 
-## Adapted Branching Strategy
-![alt text](image-2.png)
+
+## Adapted Trunk-based / GitFlow Branching Strategy
+![Screenshot 2024-12-02 at 5 49 01 PM](https://github.com/user-attachments/assets/4d8cfeb7-660c-4934-8f08-548073f2101d)
 
 ## Get Started
 To get started with the project, follow the steps below:
