@@ -23,7 +23,7 @@ Repositories:
 _describe the project scope of what and why_ 
 
 ### Solution Architecture
-![image](https://github.com/user-attachments/assets/3b9dbbff-6ce5-4776-bcd9-6eb3dd928eef)
+![Screenshot 2024-12-02 at 5 52 40 PM](https://github.com/user-attachments/assets/6a119290-09f5-4180-bcfc-20f757df87f1)
 
 ## Getting Started
 Clone the above-mentioned Git repositories and then follow the following steps of action:
