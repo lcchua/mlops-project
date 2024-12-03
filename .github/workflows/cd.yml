@@ -51,16 +51,17 @@ jobs:
             if [[ ${{ env.IMAGE_TAG }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                 echo "match=true" >> $GITHUB_OUTPUT
             fi
+            echo $match
             
       - name: Valid tag outcome
         if: steps.check-tag.outputs.match == true
         run: |
-            echo "Release tag ${{ steps.check-tag.outputs.match }} is valid
+            echo "Release tag ${{ steps.check-tag.outputs.match }} is valid"
             
       - name: Parse validation results
         if: ${{ !steps.check-tag.outputs.match == true }}
         run: |
-            echo "Release tag ${{ steps.check-tag.outputs.match }} is invalid
+            echo "Release tag ${{ steps.check-tag.outputs.match }} is invalid"
             exit 1
       
       - name: search entered tag can be found in repo commit history
