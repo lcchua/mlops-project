@@ -69,6 +69,7 @@ jobs:
         run: |
           git fetch --tags
           echo "CONTAINS_TAG=$(git describe --tags --contains ${{ env.RELEASE_TAG }})" >> $GITHUB_OUTPUT
+          echo $CONTAINS_TAG
           
       - name: parse search results
         if: steps.match-tag.outputs.CONTAINS_TAG == "Could not get sha1 for ${{ env.RELEASE_TAG }}. Skipping."
