@@ -31,7 +31,61 @@ _describe the project scope of what and why_
 Clone the above-mentioned Git repositories and then follow the following steps of action:
 
 ### ML Model Training & Publishing
-_fill in the workflow pipeline steps to check, install, build and execute_
+_fill in the workflow pipeline steps to check, install, build and execute_<br>
+_remove this section as according_`
+#### Dependencies
+_fill in the dependencies if any_
+#### Application or Repo Structure
+_describe the application or repo structure if any_
+#### Branching Strategies
+_describe the branching strategy if any_
+#### Production Branch
+_describe the branch actions for prod env if any_
+#### Non-Production Branch
+_describe the branch actions for nonprod env if any_
+#### CICD Pipeline
+_describe the pipeline workflow including output samples if any_
+#### Learning Journey
+_add what "little secrets" have been learnt that you like to share with others_ 
+
+## AWS EKS/Kubernetes Cluster Infrastructure
+_fill in the workkflow pipeline steps to check, install, build and execute_<br>
+_remove this section as according_
+#### Dependencies
+_fill in the dependencies if any_
+#### Application or Repo Structure
+_describe the application or repo structure if any_
+#### Branching Strategies
+_describe the branching strategy if any_
+#### Production Branch
+_describe the branch actions for prod env if any_
+#### Non-Production Branch
+_describe the branch actions for nonprod env if any_
+#### CICD Pipeline
+_describe the pipeline workflow including output samples if any_
+#### Learning Journey
+_add what "little secrets" have been learnt that you like to share with others_ 
+
+## Prometheus & Grafana SRE Montioring Tools
+_fill in the workflow pipeline steps to check, install, build and execute_<br>
+_remove this section as according_
+#### Dependencies
+_fill in the dependencies if any_
+#### Application or Repo Structure
+_describe the application or repo structure if any_
+#### Branching Strategies
+_describe the branching strategy if any_
+#### Production Branch
+_describe the branch actions for prod env if any_
+#### Non-Production Branch
+_describe the branch actions for nonprod env if any_
+#### CICD Pipeline
+_describe the pipeline workflow including output samples if any_
+#### Learning Journey
+_add what "little secrets" have been learnt that you like to share with others_ 
+
+### Insurance Buying Prediction Application Deployment & Rollback
+_fill in the workflow pipeline steps to check, install, build and execute_<br>
 _remove this section as according_
 #### Dependencies
 _fill in the dependencies if any_
@@ -50,24 +104,6 @@ _add what "little secrets" have been learnt that you like to share with others_
 
 <br>
 
-## AWS EKS/Kubernetes Cluster Infrastructure
-_fill in the workkflow pipeline steps to check, install, build and execute_
-_remove this section as according_
-
-<br>
-
-## Prometheus & Grafana SRE Montioring Tools
-_fill in the workflow pipeline steps to check, install, build and execute_
-_remove this section as according_
-
-<br>
-
-###Insurance Buying Prediction Application Deployment & Rollback
-_fill in the workflow pipeline steps to check, install, build and execute_
-_remove this section as according_
-
-<br>
-
 ## Licensing and Credits
 Credits to the 'hardcore' team:
 - Jun Jie
@@ -75,5 +111,8 @@ Credits to the 'hardcore' team:
 - Stephen Tan
 - Chua Lai Chwang
 
+<br>
+
 ## Additional Resources if any
 1. [Machine Learning Operations (MLOps) For Beginners](https://medium.com/@prasadmahamulkar/machine-learning-operations-mlops-for-beginners-a5686bfe02b2)
+2. 
