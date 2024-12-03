@@ -48,22 +48,38 @@ jobs:
       - name: Validate entered release tag
         id: check-tag
         run: |
-            if [[ ${{ env.IMAGE_TAG }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [[ ${{ env.RELEASE_TAG }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                 echo "match=true" >> $GITHUB_OUTPUT
             fi
+            echo $match
             
       - name: Valid tag outcome
         if: steps.check-tag.outputs.match == true
         run: |
-            echo "Release tag ${{ steps.check-tag.outputs.match }} is valid
+            echo "Release tag ${{ steps.check-tag.outputs.match }} is valid"
             
       - name: Parse validation results
         if: ${{ !steps.check-tag.outputs.match == true }}
         run: |
-            echo "Release tag ${{ steps.check-tag.outputs.match }} is invalid
+            echo "Release tag ${{ steps.check-tag.outputs.match }} is invalid"
             exit 1
       
-
+      - name: search entered tag can be found in repo commit history
+        id: match-tag
+        run: |
+          git fetch --tags
+          echo "CONTAINS_TAG=$(git describe --tags --contains ${{ env.RELEASE_TAG }})" >> $GITHUB_OUTPUT
+          echo $CONTAINS_TAG
+          
+      - name: parse search results
+        if: ${{ !steps.check-tag.outputs.match == env.RELEASE_TAG }}
+        # if: steps.match-tag.outputs.CONTAINS_TAG == "Could not get sha1 for ${{ env.RELEASE_TAG }}. Skipping."
+        run: |
+          echo "Input tag or release version is not found in the repository commit history"
+          echo "Tag search yielded ${{ steps.match-tag.outputs.CONTAINS_TAG }}"
+          exit 1
+      
+      
       - name: use non-prod values
         if: github.ref == 'refs/heads/develop'
         #  sed -i "s/<IMAGE_TAG>/v3.0.0.7/g" ./skaffold.yaml
@@ -71,7 +87,7 @@ jobs:
             EKS_NAMESPACE="dev"
             IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
             AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}"
-            AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:v3.0.0.7"
+            AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}"
             echo "$EKS_NAMESPACE"
             echo "$IMAGE_TAG"
             echo "$AWS_ECR_REG"
@@ -92,7 +108,7 @@ jobs:
             EKS_NAMESPACE="prod"
             IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
             AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}"
-            AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:latest"
+            AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/'${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}"
             echo "$EKS_NAMESPACE"
             echo "$IMAGE_TAG"
             echo "$AWS_ECR_REG"
