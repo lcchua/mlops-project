@@ -85,7 +85,7 @@ jobs:
         #  sed -i "s/<IMAGE_TAG>/v3.0.0.7/g" ./skaffold.yaml
         run: |
             EKS_NAMESPACE="dev"
-            echo "IMAGE_TAG=$(${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }})" >> $GITHUB_ENV
+            echo "IMAGE_TAG=${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}" >> $GITHUB_ENV
             AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}"
             AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}"
             echo "$EKS_NAMESPACE"
@@ -106,7 +106,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
             EKS_NAMESPACE="prod"
-            echo "IMAGE_TAG=$(${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }})" >> $GITHUB_ENV
+            echo "IMAGE_TAG=${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}" >> $GITHUB_ENV
             AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}"
             AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}"
             echo "$EKS_NAMESPACE"
