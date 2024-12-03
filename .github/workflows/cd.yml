@@ -72,10 +72,11 @@ jobs:
           echo $CONTAINS_TAG
           
       - name: parse search results
-        if: steps.match-tag.outputs.CONTAINS_TAG == "Could not get sha1 for ${{ env.RELEASE_TAG }}. Skipping."
+        if: ${{ !steps.check-tag.outputs.match == env.RELEASE_TAG }}
+        # if: steps.match-tag.outputs.CONTAINS_TAG == "Could not get sha1 for ${{ env.RELEASE_TAG }}. Skipping."
         run: |
           echo "Input tag or release version is not found in the repository commit history"
-          echo ${{ steps.match-tag.outputs.CONTAINS_TAG }}
+          echo "Tag search yielded ${{ steps.match-tag.outputs.CONTAINS_TAG }}"
           exit 1
       
       
