@@ -66,7 +66,7 @@ _describe the pipeline workflow including output samples if any_
 #### Learning Journey
 _add what "little secrets" have been learnt that you like to share with others_ 
 
-## Prometheus & Grafana SRE Montioring Tools
+## Prometheus & Grafana SRE Monitoring Tools
 _fill in the workflow pipeline steps to check, install, build and execute_<br>
 _remove this section as according_
 #### Dependencies
@@ -84,7 +84,7 @@ _describe the pipeline workflow including output samples if any_
 #### Learning Journey
 _add what "little secrets" have been learnt that you like to share with others_ 
 
-### Insurance Buying Prediction Application Deployment & Rollback
+## Insurance Buying Prediction Application Deployment & Rollback
 _fill in the workflow pipeline steps to check, install, build and execute_<br>
 _remove this section as according_
 #### Dependencies
