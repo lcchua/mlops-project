@@ -173,9 +173,20 @@ jobs:
       # Connect to EKS cluster
       - name: Connect to EKS cluster 
         run: aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER
+        
       # Build and deploy to EKS cluster - exclude the ingress service
-      - name: Build and then deploy to EKS cluster with Skaffold
-        run: skaffold deploy --images=255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+      - name: Deploy to dev EKS cluster with Skaffold
+        if: github.ref == 'refs/heads/develop'
+        run: |
+            skaffold deploy --images=255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+            echo "deployed ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }} to test environment"
+        
+      - name: Deploy to PROD EKS cluster with Skaffold
+        if: github.ref == 'refs/heads/main'
+        run: |
+            skaffold deploy --images=255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
+            echo "deployed ${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }} to prod environment"
+            
       # Replace the hostname of ingress service with load balancer address
       # - name: Replace the hostname of ingress service with load balancer address
       #   run: |
