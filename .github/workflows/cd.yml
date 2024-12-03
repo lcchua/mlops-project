@@ -26,7 +26,7 @@ env:
   EKS_CLUSTER: ${{ vars.EKS_CLUSTER }}
   EKS_REGION: ${{ vars.EKS_REGION }}
   RELEASE_TAG: ${{ github.event.inputs.release_tag }}
-  IMAGE_TAG: "v3.0.0.7"
+  # IMAGE_TAG: "v3.0.0.7"
   
 jobs:
   deploy:
@@ -85,7 +85,7 @@ jobs:
         #  sed -i "s/<IMAGE_TAG>/v3.0.0.7/g" ./skaffold.yaml
         run: |
             EKS_NAMESPACE="dev"
-            IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
+            echo "IMAGE_TAG=$(${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }})" >> $GITHUB_ENV
             AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}"
             AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}"
             echo "$EKS_NAMESPACE"
@@ -106,7 +106,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
             EKS_NAMESPACE="prod"
-            IMAGE_TAG="${{ env.VER_TAG }}.${{ github.run_number }}:latest"
+            echo "IMAGE_TAG=$(${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }})" >> $GITHUB_ENV
             AWS_ECR_REG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}"
             AWS_ECR_TAG="255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}"
             echo "$EKS_NAMESPACE"
@@ -174,18 +174,11 @@ jobs:
       - name: Connect to EKS cluster 
         run: aws eks --region $EKS_REGION update-kubeconfig --name $EKS_CLUSTER
         
-      # Build and deploy to EKS cluster - exclude the ingress service
-      - name: Deploy to dev EKS cluster with Skaffold
-        if: github.ref == 'refs/heads/develop'
+      # Build and deploy to EKS cluster
+      - name: Deployment to  EKS cluster with Skaffold
         run: |
-            skaffold deploy --images=255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
-            echo "deployed ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }} to test environment"
-        
-      - name: Deploy to PROD EKS cluster with Skaffold
-        if: github.ref == 'refs/heads/main'
-        run: |
-            skaffold deploy --images=255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }}
-            echo "deployed ${{ vars.PROD_IMAGE_NAME }}:${{ env.RELEASE_TAG }} to prod environment"
+            skaffold deploy --images=255945442255.dkr.ecr.us-east-1.amazonaws.com/${{ env.IMAGE_TAG }}
+            echo "deployed ${{ env.IMAGE_TAG }} to eks cluster"
             
       # Replace the hostname of ingress service with load balancer address
       # - name: Replace the hostname of ingress service with load balancer address
