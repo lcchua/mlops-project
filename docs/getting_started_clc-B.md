@@ -10,12 +10,16 @@ For the ML Python environment dependencies, the following package libraries are 
 #### Branching Strategies
 The branching strategy adopted in this project is adapted from Trunk-based and GitFlow branching, and can be depicted as follows:
   ![adapted-branching-strategy](https://github.com/user-attachments/assets/29d59e48-0818-4895-b7ea-a9b403ee043e)
-#### Main Branch
-The production branch is denoted as the Main branch. Only the `Promote Tested App Image` workflow runs here that will promote a (SIT) tested `predict_buy_app` from the Develop branch to the Main branch for production release.
+#### Feature Branch (short-lived)
+The Feature branch is "short-lived" and are used by data engineers, data scietntists, application developers and cloud infra engineers for their feature-set by feature-set workstreams.
 
-  ![develop-main-branch-cicd-diagram](https://github.com/user-attachments/assets/9970916c-9637-4738-abff-f8744ab7904a)
-#### Develop Branch
-  ![feature-branch-cicd-diagram](https://github.com/user-attachments/assets/2037998a-c25a-4bb6-ac40-fff31ccd31ce)
+  ![feature-branch-cicd-diagram](https://github.com/user-attachments/assets/74bc0afd-3b59-4f69-bcc5-5afba0d6cc68)
+#### Main and Develop Branches (stable)
+The production branch is denoted as the Main branch. Only the `Promote Tested App Image` workflow runs here that will promote a (SIT) tested `predict_buy_app` from the Develop branch to the Main branch for production release. Both the Develop and Main branches are stable branches used for Testing and Production release purposes.
+
+The CICD pipeline workflows spanning between the Develop and Main branches is illustrated as follows:
+
+  ![develop-main-branch-cicd-diagram](https://github.com/user-attachments/assets/99d7f606-191f-42c9-bb38-af7311674e8f)
 #### CICD Pipeline
   ![ci_tf_workflow-screenshot](https://github.com/user-attachments/assets/a1904669-5a34-4980-8422-8ac46a0dc56c)
   ![ci_tf_checkov_output-screenshot](https://github.com/user-attachments/assets/72ee43d8-4819-4dff-b356-e53c73480062)
