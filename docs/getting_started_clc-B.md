@@ -6,8 +6,7 @@ The event trigger dependecies of the GitHub Actions workflows can be described a
 For the ML Python environment dependencies, the following package libraries are required as listed in the `requirements.txt` file:
   ![Screenshot 2024-12-04 at 2 26 03 PM](https://github.com/user-attachments/assets/632a7ba6-e8a6-4c51-b97f-520beebb2931)
 #### Project Repo Structure
-  |![repo-structure-screenshot1](https://github.com/user-attachments/assets/0abb694f-9581-4e45-ab59-f02d45e77932)|
-  ![repo-structure-screenshot2](https://github.com/user-attachments/assets/91e99fee-e5d6-4318-89e8-bb2028ec6c15) |
+  |  ![repo-structure-screenshot1](https://github.com/user-attachments/assets/bdeb2d4e-dea3-4b3c-9860-cf04d154442d)  |  ![repo-structure-screenshot2](https://github.com/user-attachments/assets/15fca66b-0545-4136-9710-b1c8caca164e)  |
 #### Branching Strategies
 The branching strategy adopted in this project is adapted from Trunk-based and GitFlow branching, and can be depicted as follows:
   ![adapted-branching-strategy](https://github.com/user-attachments/assets/29d59e48-0818-4895-b7ea-a9b403ee043e)
