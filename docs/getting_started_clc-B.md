@@ -19,7 +19,7 @@ The production branch is denoted as the Main branch. Only the `Promote Tested Ap
 
 The CICD pipeline workflows spanning between the Develop and Main branches is illustrated as follows:
 
-  ![develop-main-branch-cicd-diagram](https://github.com/user-attachments/assets/6eb9cfef-74f7-4737-96a9-7f1525ed112d)
+  ![develop-main-branch-cicd-diagram](https://github.com/user-attachments/assets/99d7f606-191f-42c9-bb38-af7311674e8f)
 #### CICD Pipeline
   ![ci_tf_workflow-screenshot](https://github.com/user-attachments/assets/a1904669-5a34-4980-8422-8ac46a0dc56c)
   ![ci_tf_checkov_output-screenshot](https://github.com/user-attachments/assets/72ee43d8-4819-4dff-b356-e53c73480062)
