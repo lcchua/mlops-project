@@ -28,10 +28,19 @@ The Kubernetes manifest files can be found in the .k8s folder. Deployment and se
 ![Screenshot fastapi_k8s_manifest](https://github.com/user-attachments/assets/67c6f109-526a-49d7-b9de-5fde86da735a)
 
 
-#### Branching Strategies
-_describe the branching strategy if any_
-#### Production Branch vs Non-Production Branch
-We have adopted a modified approach to GitHub Flow branching strategy. The Main branch remains the production branch and the Develop branch is the other long lived branch for non-production/testing environment.
+#### Deployment Strategy with Respect to our Branching Strategy
+We have adopted a modified approach to GitHub Flow branching strategy. The Main branch remains the production branch and the Develop branch is the other long lived branch for non-production/testing environment
+
+Since there are only 2 long lived branches, we have implemented manual dispatch of the deployment workflow for more control over testing and production instances. This is to ensure that approved pull requests merged into the Develop branch do not trigger the deployment flow, since we do not have a release branch.
+
+
+Our branching strategy:
+
+[The flow](https://private-user-images.githubusercontent.com/36467775/391939513-29d59e48-0818-4895-b7ea-a9b403ee043e.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzMzOTY1MTYsIm5iZiI6MTczMzM5NjIxNiwicGF0aCI6Ii8zNjQ2Nzc3NS8zOTE5Mzk1MTMtMjlkNTllNDgtMDgxOC00ODk1LWI3ZWEtYTliNDAzZWUwNDNlLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDEyMDUlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQxMjA1VDEwNTY1NlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTI2OTk0NDc2NTVjODE2ZmM1MTgzZWQxNDAwZDQ1YTAxM2E5OTllYTRjMDBmODM2ODMzMDYyNjMzNzE2NWQxYWMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.b8n09odgDDxN8tJvwsJqBtbxHZuIyTZV1nn41tHWWAM)
+
+
+
+#### Manual dispatch of Deployment workflow on Production Branch vs Non-Production Branch
 
 Triggering the flow on _Main_ branch will deploy the image from AWS ECR to the production namespace in the EKS cluster and likewise, triggering flow on _Develop_ branch will deploy to the nonprod namespace.
 
@@ -67,7 +76,7 @@ Final step of the deployment is to verify that the deployment is running by runn
 
 **Separation of Concerns**
 
-The .pbx model file is bundled wit API code and ideally should be decoupled and maintained in an AWS S3 storage. By doing so, we can fully utilize Skaffold's complete pipeline tool for CI/CD purposes. Such an implementation would have the API to connect to the .pbx model file when required. Any updates in the model file would not require rebuild of the FASTIAPI image.
+The .pbx model file is bundled with API code and ideally should be decoupled and maintained in an AWS S3 storage. By doing so, we can fully utilize Skaffold's complete pipeline tool for CI/CD purposes. Such an implementation would have the API to connect to the .pbx model file when required. Any updates in the model file would not require rebuild of the FASTIAPI image and vice versa.
 
 **Add an action to deploy on release**
 
@@ -75,5 +84,6 @@ In addition to the manual workflow dispatch step, we could have used a release a
 
 ![image](https://github.com/user-attachments/assets/03d94c2e-cb1b-4d57-b1f0-78d417b4c54b)
 
+It is also possible to further automate deployment to prod EKS namespace by adding a on push trigger to the main branch.
 
 
