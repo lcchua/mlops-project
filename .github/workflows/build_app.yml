@@ -32,10 +32,13 @@ on:
         options:
           - 'y'
           - 'n'
-# Trigger condition 3: Whenver train_model runs successfully, 
-# it calls build_app to run too.
+# Trigger condition 3: Whenver 'train_model' workflow runs, 
+# successfully, it callls the 'build_app'workflow to run too.
+# However, it seems that there are times where the ML model/dataset
+# 'dvc' metadata may not befully  checked-in to the Git repo in the
+# tr 
 # This is no longer used, kept for future reference only.
-#  workflow_call:
+# workflow_call:
 #    inputs:
 #      skip_confirmation:
 #        required: true
