@@ -34,14 +34,14 @@ on:
           - 'n'
 # Trigger condition 3: Whenver train_model runs successfully, 
 # it calls build_app to run too.
-# This is no longer used, kept for furture reference only.
+# This is no longer used, kept for future reference only.
 #  workflow_call:
 #    inputs:
 #      skip_confirmation:
 #        required: true
 #        type: string
 # Trigger condition 4: This runs on the same 'feature*'' branch
-# as 'Train ML Model' workflow.Note an issue here is workflow_run
+# as 'Train ML Model' workflow. Note an issue here is workflow_run
 # event is triggered only if the workflow file is on the default branch.
 #  workflow_run:
 #    workflows: ["Train ML Model"]
