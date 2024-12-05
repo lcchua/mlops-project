@@ -2,16 +2,17 @@
 name: Build Docker App Image
 
 on:
+# Not used currently but kept for future reference only.
 # Trigger condition 1: After completion of train_model workflow 
 # which builds a newly trained ML model, it also auto-generates 
 # a merge pr on develop branch which then triggers this workflow. 
-#  pull_request:
-#    types:
-#      - closed
-#    branches:
-#      - develop
-#    paths:
-#      - 'models/*.pkl.dvc'
+  pull_request:
+    types:
+      - closed
+    branches:
+      - feature*
+    paths:
+      - 'models/*.pkl.dvc'
 #
 # Trigger condition 2: In case of having to run 
 # build_app without train_model having ran.
@@ -40,13 +41,14 @@ on:
 #        required: true
 #        type: string
 # Trigger condition 4: This runs on the same 'feature*'' branch
-# as 'Train ML Model' workflow.
-  workflow_run:
-    workflows: ["Train ML Model"]
-    types:
-      - completed
-    branches:
-      - feature*
+# as 'Train ML Model' workflow.Note an issue here is workflow_run
+# event is triggered only if the workflow file is on the default branch.
+#  workflow_run:
+#    workflows: ["Train ML Model"]
+#    types:
+#      - completed
+#    branches:
+#      - feature*
 
 permissions: write-all
 
@@ -62,15 +64,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: nonprod
     needs: [Pre-Deploy]
-    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.workflow_run.conclusion == 'success' }}
-  # This workflow_call conidition check is no longer in use - 
-  #     ${{ github.event.pull_request.merged }}
-  # but just kept for reference only.
+    if: ${{ github.event_name == 'workflow_dispatch' &&  github.event.inputs.confirm == 'y' }} || ${{ github.event.pull_request.merged }}
+  #
+  # This pull_request event trigger conditional check is no longer 
+  # in use now but kept for future reference only
+  #   ${{ github.event.workflow_run.conclusion == 'success' }}
+  #
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0 # Ensure full repo is cloned
 
       # Prepare the working environment
@@ -87,18 +92,20 @@ jobs:
       - name: Install DVC
         run: pip install dvc[all]
       - name: Configure Git
-        env:
-          GIT_USERNAME: HanKyung
-          GIT_USEREMAIL: infohk.286@gmail.com
         run: |
-          git config --global user.name ${{ env.GIT_USERNAME }}
-          git config --global user.email ${{ env.GIT_USEREMAIL }}
+          git config --global user.name ${{ vars.GIT_USERNAME }}
+          git config --global user.email ${{ vars.GIT_USEREMAIL }}
 
       # Only pull from DVC the last-commited ML model if 
       # there is no model already exisiting locally in the event
       # of 'workflow_dispatch' trigger - manual workkflow case
       - name: Pull from DVC
         run: |
+          echo "Checkout ref = ${{ github.ref }}"
+          if [[ ! -d .dvc ]]; then
+            echo "DVC is not initialised, .dvc directory does not exists"
+            exit 1
+          fi
           if [[ -f "models/model.pkl.dvc" && -f "models/model.pkl" ]]; then
             echo "A ML Model is already existing in the 'models' sub-directory!" 
           elif [[ -f "models/model.pkl" ]]; then
@@ -129,13 +136,11 @@ jobs:
         env:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        run: | # The first command below runs in quiet mode to untag the latest tag # export the ECR path to be used for deployment
-          aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} \
-            --image-ids imageTag=latest 2>/dev/null
-          docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-            -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
-          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }} \
-            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}.${{ github.run_number }}
+        run: | # This 1st WS cmd runs in quiet mode to rmove latest tag
+          aws ecr batch-delete-image --repository ${{ vars.NONPROD_IMAGE_NAME }} --image-ids imageTag=latest 2>/dev/null
+          docker build -t ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }} -t ${{ vars.NONPROD_IMAGE_NAME }}:latest .
+          docker tag ${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }} \
+            ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:${{ env.VER_TAG }}
           docker tag ${{ vars.NONPROD_IMAGE_NAME }}:latest \
             ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}:latest
 
@@ -162,6 +167,4 @@ jobs:
           REG_NAME: ${{ steps.login-ecr.outputs.registry }}
           VER_TAG: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}
         run: |
-          docker push --all-tags ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }}
-          
-          
+          docker push ${{ env.REG_NAME }}/${{ vars.NONPROD_IMAGE_NAME }} --all-tags
