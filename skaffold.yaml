@@ -1,0 +1,27 @@
+apiVersion: skaffold/v3
+kind: Config
+
+build:
+  tagPolicy:
+    envTemplate:
+      template: "{{.IMAGE_TAG}}"
+  artifacts:
+    - image: <PUBLIC_ECR_AWS>
+      context: .
+      docker:
+        dockerfile: dockerfile
+     
+      
+manifests:
+  rawYaml:
+    - .k8s/*.yml
+        
+deploy:
+    # In case we enable status check, this will be the timeout till which skaffold will wait
+    statusCheckDeadlineSeconds: 600
+    # Using kubectl as our deployer
+    kubectl: {}
+    
+        # Location to our yaml files
+        # Refer https://skaffold.dev/docs/references/yaml/ for more options
+        
