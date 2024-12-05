@@ -26,12 +26,6 @@ on:
 
 permissions: write-all
 
-env:
-  ML_ARTEFACTS_S3: s3://ce7-grp-1-bucket/DVC_artefacts/
-  ML_NEW_DATA_S3: s3://ce7-grp-1-bucket/new_ML_data/
-  GIT_USERNAME: lcchua
-  GIT_USEREMAIL: laichwang@gmail.com
-
 jobs:
   Pre-Deploy:
     runs-on: ubuntu-latest
@@ -49,6 +43,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0 # Ensure full repo is cloned
 
       - name: Install Python
@@ -75,8 +70,8 @@ jobs:
       
       - name: Configure Git
         run: |
-          git config --global user.name ${{ env.GIT_USERNAME }}
-          git config --global user.email ${{ env.GIT_USEREMAIL }}
+          git config --global user.name ${{ vars.GIT_USERNAME }}
+          git config --global user.email ${{ vars.GIT_USEREMAIL }}
 
     # To intialise dvc tracking if and only if it has not been set up for
     # the first-time already
@@ -100,7 +95,7 @@ jobs:
     # Latest new datasets are placed in S3 'new_datasets' folder,
     # if new datasets exist then overide the dvc-pulled datasets
       - name: Pull datasets from S3
-        run: aws s3 cp ${{ env.ML_NEW_DATA_S3 }} data/ --quiet --recursive
+        run: aws s3 cp ${{ vars.ML_NEW_DATA_S3 }} data/ --quiet --recursive
 
       - name: Train the prediction model
         run: python3 main.py
@@ -135,19 +130,22 @@ jobs:
           dvc add models/model.pkl && echo "CP6"
           git add models/model.pkl.dvc models/.gitignore && echo "CP7"
           git commit -m "add tracking of new trained model ${{ steps.get_latest_tag.outputs.LATEST_TAG }}" && echo "CP8"
-          dvc remote add -d -f remote ${{ env.ML_ARTEFACTS_S3 }} && echo "CP9"
+          dvc remote add -d -f remote ${{ vars.ML_ARTEFACTS_S3 }} && echo "CP9"
           git commit .dvc/config -m "update dvc configuration" && echo "CP10"
           dvc push && echo "CP11"
-          git push && echo "CP12"
+      #    git push && echo "CP12"
 
-#      - name: Generate Pull Request
-#        uses: peter-evans/create-pull-request@v7
-#        with:
-#          commit-message: |
-#            [create-pr] Automated dvc git changes in train_model workflow
-#          title: |
-#            Update dvc git configuration 
-#          delete-branch: true
+#
+# Some old script kept here for future reference only.
+      - name: Generate Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            [create-pr] Automated dvc-git changes in train_model workflow
+          title: |
+            Update dvc git configuration 
+          delete-branch: true
+#
 
 # 
 #  This call-workflow block is no longer in use but kept for reference only.
@@ -158,4 +156,4 @@ jobs:
 #    with:
 #      skip_confirmation: 'true'
 #    secrets: inherit
- 
+#

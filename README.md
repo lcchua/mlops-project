@@ -1,79 +1,72 @@
-# Insurance Cross Sell Prediction 🏠🏥
-[![GitHub](https://img.shields.io/badge/GitHub-code-blue?style=flat&logo=github&logoColor=white&color=red)](https://github.com/lcchua/mlops-project.git) Source Reference: [![Medium](https://img.shields.io/badge/Medium-view_article-green?style=flat&logo=medium&logoColor=white&color=green)](https://medium.com/@prasadmahamulkar/machine-learning-operations-mlops-for-beginners-a5686bfe02b2)
+# NTU CE7 Group 1 Capstone Project Use-Case Documentation
+<br>
 
-Welcome to the Insurance Cross-Selling Prediction project! The goal of this project is to predict which customers are most likely to purchase additional insurance products using a machine learning model.
+<img src="https://github.com/user-attachments/assets/b7e4e120-6c5d-41c1-aac1-2c69889b8f95" alt="MLOps Overview" width="1000" />
+<br>
 
-## ML Pipeline
-![alt text](image-3.png)
+### Our Company Profile
+Quantum AI is a Singapore-based tech startup specializing in AI platform engineering for the insurance industry. We are a team of 4 'hardcore' engineers who is responsible for the "development and operations" ('DevOps') of Quantum's cloud AI platform. It offers customer up-selling and cross-selling predictions for insurance and bancassurance companies. Each member of this team has specialised tech skills and subject-matter expertise working collectively to ensure the continuous advancement and resilience of the platform.
+### The 'Hardcore' Engineering Team
+| **Name**                  | **Roles**                           |  **Expertise**                               |
+|---------------------------|-------------------------------------|----------------------------------------------|
+| Stephen Tan               | DevOps/DevSecOps Engineer           | GitHub & CICD Wizard                         |
+| Tan Yuan                  | Cloud & On-Premise Infra Engineer   | Kubernetes & Cloud Master                    |
+| Jun Jie                   | Platform Monitoring Engineer        | Prometheus & Grafana Spymmaster              | 
+| Chua Lai Chwang           | MLOps Engineer & Project Manager    | GitHub Actions Scrum Master                  |
 
-## Capstone Project Overview
-![alt text](image.png)
+<br>
 
-## DevOps / DevSecOps Workflows
-![alt text](image-1.png)
+## The Project
+Project Name: **Machine-Learning (ML) DevOps with DevSecOps and SRE Monitoring**<br>
+- Our organization repository [CE7-Group1-Capstone](https://github.com/CE7-Group1-Capstone) consists of: 
+  - [CI & Docker Image Registry Pipeline for ML Model Training & Publishing](https://github.com/CE7-Group1-Capstone/mlops-project)
+  - [CI/CD Pipeline for AWS EKS/K8S Clusters Infrastructure & Monitoring Tools](https://github.com/CE7-Group1-Capstone/Capstone-Infrastructure)
+  - CD Pipeline for Insurance Buying Prediction Application Deployment & Rollback is part of the above 2 repos
 
-## Adapted Branching Strategy
-![alt text](image-2.png)
+### Scope, Context and Motivation 
+The primary use-case of this project centres on DevOps combined with basic use-cases of DevSecOps and SRE monitoring. This project covers the developing and deploying of machine learning (ML) models to the resilient, cloud-native Kubernetes (K8S) clusters in the non-production and production environments. The maintenance of ML models is excluded from this capstone due to time limitation. This CICD automation process of "DevOps for ML application" is known as MLOps which is generally illustrated as below. 
 
-## Get Started
-To get started with the project, follow the steps below:
+![MLOps Process](https://github.com/user-attachments/assets/a8f49323-ff20-44a9-b9ca-c5feccc7d8dc)
 
-#### 1. Clone the Repository
-Clone the project repository from GitHub:
-```bash
-git clone https://github.com/lcchua/mlops-project.git
-```
-```bash
-cd mlops-project
-```
-#### 2. Set Up the Environment
-Ensure you have Python 3.8+ installed. Create a virtual environment and install the necessary dependencies:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-Alternatively, you can use the Makefile command:
-```bash
-make setup
-```
-#### 3. Data Preparation
-Pull the data from DVC. If this command doesn't work, the train and test data are already present in the data folder:
-```bash
-dvc pull
-```
+For our capstone scope, we have impelmented the source repository, CI/CD pipelines, data engineering, ML model engineering, ML metadata store including the ML model and data version control, model registry (of FastAPI app Docker images) and CD stage (of ML models serving as container Pods/Services/Deployments in the K8S clusters).
 
-#### 4. Train the Model
-To train the model, run the following command:
+In this project context, the ML application is a prediction of whether an insurance customer is most likely to buy or renew an insurance policy or not, That is predicting the customer's propensity to buy an insurance product or otherwise. For ML model training, the aplication uses 3 different data classification algorithms of decision tree cliassifer, gradient boosting classifier and random forest classifier. 
 
-```bash
-python main.py 
-```
-Or use the Makefile command:
+Our motivation for electing the implementation coverage of MLOps, Kubernetes and SRE Monitoring for our capstone project lies with our desire to apply what we have learnt and in learning through hands-on practice. Though we did not implement the end-to-end MLOps process, we believe what we have started serve as as good baseline for us to learn further subsequently as we sought to extend our capstone implementation in the future. 
 
-```bash
-make run
-```
-This script will load the data, preprocess it, train the model, and save the trained model to the models/ directory.
+With the currrent proliferation of AI, it is imperative that the field of MLOps or AIOps will be a necessity in the technological advancement and mass adoption of AI wherein the process automation of AI/ML operation and security is essential.
 
-#### 5. FastAPI
-Start the FastAPI application by running:
+### Solution Architecture Overview
+The solution architecture can be described as follows:
 
-```bash
-uvicorn app:app --reload
-```
+![capstone-project-solution-architecture](https://github.com/user-attachments/assets/5778e1cf-19a0-4cde-a26a-df0613683a46)
 
-#### 6. Docker
-To build the Docker image and run the container:
+It comprises of 3 major domains:
+  -  Machine Learning Development: ML Model Training and Publishing to AWS Elastic Container Registry (ECR) with AWS S3 bucket for the ML model version control metatdata and training datasets storage
+  -  Cluster Infra Deployment: Terraform creation for AWS Elastic Kubernetes Service (EKS), Prometheus / Grafana monitoring tools, K8S / AWS CloudWatch / Loki logging stack
+  -  Prediction Application Deployment & Rollback: GitHub Actions CD workflow pipeline from ECR to EKS for deployment to prod environment
 
-```bash
-docker build -t my_fastapi .
-```
-```bash
-docker run -p 80:80 my_fastapi
-```
-Once your Docker image is built, you can push it to Docker Hub, making it accessible for deployment on any cloud platform.
-#### 7. Push the Model to a Docker Image registry
-......
-```
+<br>
 
+## Getting Started
+First clone the above-mentioned Git repositories and get started with the project in the following sections:
+- [ML Model Training and Publishing](docs/getting_started_clc-A.md)
+- [AWS EKS/Kubernetes Cluster Infrastructure](docs/getting_started_ty.md)
+- [Prometheus & Grafana SRE Monitoring Tools](docs/getting_started_jj.md)
+- [Insurance Buying Prediction Application Deployment & Rollback](docs/getting_started_st.md)
+
+
+<br>
+
+## Licensing and Credits
+Credits to the 'hardcore' team:
+- Jun Jie
+- Tan Yuan
+- Stephen Tan
+- Chua Lai Chwang
+
+<br>
+
+## Additional Resources if any
+1. [Machine Learning Operations (MLOps) For Beginners](https://medium.com/@prasadmahamulkar/machine-learning-operations-mlops-for-beginners-a5686bfe02b2)
+2. 

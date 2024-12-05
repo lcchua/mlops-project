@@ -41,6 +41,7 @@ jobs:
 
     steps:
       - name: Conditional check to promote only if DVC exists
+      # Exit code 78 is not an error; it is used to signal that a job or step was intentionally skipped.
         run: |
           if ! [ -f "models/*.pkl.dvc" && -f "data/*.csv.dvc" ]; then
             echo "DVC does not exists so no promotion required."
@@ -76,8 +77,8 @@ jobs:
           LATEST_VER=$(aws ecr describe-images --repository ${{ env.NONPROD_REPO }} \
             --region ${{ env.AWS_REGION }} \
             --query "sort_by(imageDetails, &imagePushedAt)[-1].imageTags" --output text | \
-            grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+-[A-Z]{3}\.[0-9]+')
-          if [ $LATEST_VER == "" ]; then
+            grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+          if [[ $LATEST_VER == "" ]]; then
             exit 1
           fi
           docker pull ${{ env.SRC_ECR_REG }}/${{ env.SRC_ECR_REPO }}:latest
