@@ -19,10 +19,11 @@ The production branch is denoted as the Main branch. Only the `Promote Tested Ap
 
 The CICD pipeline workflows spanning between the Develop and Main branches is illustrated as follows:
 
-  ![develop-main-branch-cicd-diagram](https://github.com/user-attachments/assets/99d7f606-191f-42c9-bb38-af7311674e8f)
+  ![develop-main-branch-cicd-diagramjScope-Page-6](https://github.com/user-attachments/assets/4c8a7b58-8d6d-4f84-a312-1e3667aed192)
 #### CICD Pipeline
-  ![ci_tf_workflow-screenshot](https://github.com/user-attachments/assets/a1904669-5a34-4980-8422-8ac46a0dc56c)
-  ![ci_tf_checkov_output-screenshot](https://github.com/user-attachments/assets/72ee43d8-4819-4dff-b356-e53c73480062)
+  ![ci_tf_workflow-screenshot1](https://github.com/user-attachments/assets/a1904669-5a34-4980-8422-8ac46a0dc56c)
+  ![ci_tf_workflow-screenshot2](https://github.com/user-attachments/assets/b174effe-d68e-4979-b6b5-5941dbc7f2a4)
+  ![ci_tf_workflow-screenshot3](https://github.com/user-attachments/assets/f7d7e01c-16f1-407c-a292-256290ef7721)
   ![cd_tf_workflow-screenshot1](https://github.com/user-attachments/assets/0409d9a6-c6f8-42e1-a26f-34e30578fdd8)
   ![cd_tf_workflow_screenshot2](https://github.com/user-attachments/assets/a3a422cb-ab5a-41cd-9ca8-8b6c8dbb2e39)
   ![train_model-workflow-summary-screenshot2](https://github.com/user-attachments/assets/9780aaa1-6dfb-448e-a86d-50e36ab9fd9c)
@@ -33,6 +34,20 @@ The CICD pipeline workflows spanning between the Develop and Main branches is il
   ![py-black-formatting-screenshot](https://github.com/user-attachments/assets/7029a197-654c-40e0-bc67-f16f1c72fbd3)
   ![py-snyk-scanning-screenshot](https://github.com/user-attachments/assets/35882bac-bae0-4fea-a292-2784a82fb9f7)
 #### Learning Journey
-_add what "little secrets" have been learnt that you like to share with others_ 
+Some of the "little secrets" uncovered uin implementing this part of the MLOps Project are:
+  - `workflow_run` event trigger of GitHub Actions workflows
+
+    Originally, we wanted to make use of the event trigger of `on: workflow_run workflows: ["Train ML Model"] types: completed branches: feature*` for the `build_app` workflow, however we came to realize that:
+    
+      > _"This event will only trigger a workflow run if the workflow file is on the default branch."_ which happens to be the Main branch. And having to switch the GitHub default branch between Main and Feature branches was just not feasible.
+      > ![gha-workflow_run_event_notes](https://github.com/user-attachments/assets/b3142eb2-30cd-444d-8156-d13dcd633d52)
+
+    So at the end, we decided switching to using the workflow event trigger of `on: pull_request` though it was possible to use `on: workflow_call`.
+
+  - As the process of the developing the project's MLOPs CICD workflow files, it is much easier to code, test and debug each workflow job execution script files without using GitHub Actions first. Especially where appopriate without for Bash shell scripting. Only until the execution scripts are tested working properly then we transfer them into GitHub Actions `.yml files` where we next test on the workflow automated orchestration steps in the GitHub cloud. For this reason, a `Makefile` has been created to make this local development of the CICD workflow script files easier. 
+
+    ![mlops_makefile-screenshot](https://github.com/user-attachments/assets/ca114246-8336-46ac-9bbd-e0fd23537402)
+
+    For example, to help with installing and setting up the Python environment for machine learning and ata science analytics starting from scratch, run `make setup_vv`, `make setup_py` followed by `make setup_dvc`. Or to start the ML model training or post-training testing, run `make train` or `make test`. And to clean up the model training environment fo restart, run `make cleanup`, or to reset the local development environment back to scratch prior to the installation and setup, run `make remove`. Do make sure that the Git repo has been cloned as mentioned in the Getting Started section of this README document beforehand otherwise the `Makefile` does not work.
 
 [Go back Part A](getting_started_clc-A.md)

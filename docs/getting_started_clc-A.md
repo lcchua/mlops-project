@@ -30,7 +30,9 @@ And as well as making sure to set up and configure the following:
 For the first-time deployment, you will need to create a S3 bucket and the 2 ECR private repos. Click on `Actions` menu tab and you will see the following screen of the available GitHub Actions workflows of the left-hand side panel:
   ![gha-ci-tf-screenshot](https://github.com/user-attachments/assets/c46beac4-b340-4d54-b576-c91bce557c29)
 Next click on `CI Terraform` followed by click on `Run workflow`, then select _Use workflow from_ `Branch: main` and finally clicking on the `Run workflow` button. This will trigger a series of Terraform initialising, linting, formatting and validating checks - `tflint`, `checkov`, `terraform init/fmt/validate`.
+Here's an illustration of the Terraform Checkov scan output:
 
+![Screenshot 2024-12-05 at 4 24 22 PM](https://github.com/user-attachments/assets/0f1310e7-5067-4822-9108-a03387902c99)
 After the `CI Terraform` workflow runs successfully, click on the next workflow of `CD Terraform` to run. Select `Branch: main` and choose `y` for the _Do you really want to proceed (y/n)?_ prompt. This will trigger Terraform init/plan/apply to run.
   ![gha-cd-tf-screenshot](https://github.com/user-attachments/assets/e938c533-9145-4c80-a814-0a9f6a615cee)
 
@@ -51,10 +53,10 @@ Now that the AWS resources for ML model Training and Publishing are created, we 
 After the training dataset has been cleaned, reformmated, pre-processed and prepped into 2 .csv files of `train.csv` and `test.csv`, then proceed to upload these files into the S3 bucket `new_ML_data` folder.
   ![new-datasets-s3-bucket-screenshot](https://github.com/user-attachments/assets/a5da19c2-235a-48d6-a2c7-e22f3eec636e)
 Example datasets: [ml-datasets.zip](https://github.com/user-attachments/files/17989198/ml-datasets.zip) to unzip then upload.
-#### 3. Train the Model using Python with Scikit-Learn
+#### 3. Train the ML Model using Python with Scikit-Learn
 Now that the new datasets have been uploaded, we next proceed to the Training Stage of the ML Pipeline. The `train_model.yml` pipeline executes the ML model training job which also includes the steps for testing the model using the test dataset post-training as well as the first-time initialisation of the DVC tracking, version-controlling the trained ML model and the associated training dataset used, and scanning the model for vulnerabilities using `protectai modelscan`. It is located in the `.github/workflows` folder.
 
-This `Train ML Model` workflow is triggered `on: push` to `branches: feature*` whenever any of `paths: main.py config.yml steps/*py requirements.txt trigger_test.py` changes. The latter `trigger_test.py` is a dummy Python program that can be changed with no impact whenever you wish to test-run this workflow. Alternatively this workflow may also be triggered by manually running in from the GitHub Actions menu tab.
+This `Train ML Model` workflow is triggered by the `on: push branches: feature* paths: main.py config.yml steps/*py requirements.txt trigger_test.py` event whenever any of the ML program files change. The latter `trigger_test.py` is a dummy Python program that can be changed with no impact whenever you wish to test-run this workflow. Alternatively this workflow may also be triggered by manually running in from the GitHub Actions menu tab.
 
 After each run of the workflow steps of `Train the prediction model` and `Test the trained model` in sequence, it outputs respectively the following:
 
@@ -68,9 +70,11 @@ Here's an illustration of the workflow summary screen:
 And the screenshot of the trained ML model binaries that are saved and version-controlled by DVC into the S3 bucket `DVC_artefacts` folder:
   ![s3-ml-model-artefacts-screenshot](https://github.com/user-attachments/assets/43bb3833-6170-4805-9564-7e853c46fb74)
 #### 4. Build the ML Application using FastAPI
-After the trained ML model is ready, the `build_app.yml` pipeline runs next to build the application Docker image, then scanning it for vulnerabilities using `snyk container test` and publishing it to the private image registry of AWS ECR `ce7-grp-1/nonprod/predict_buy_app` repo. It is the last step of the Training Stage. This `Build Docker App Image` workflow is triggered `on: pull_request` of `types: closed` on `branches: feature*` whenever any of `paths: models/*.pkl.dvc` changes. Alternatively this workflow may also be triggered by manually running in from the GitHub Actions menu tab.
+After the trained ML model is ready, the `build_app.yml` pipeline runs next to build the application Docker image, then scanning it for vulnerabilities using `snyk container test` and publishing it to the private image registry of AWS ECR `ce7-grp-1/nonprod/predict_buy_app` repo. It is the last step of the Training Stage.
 
-The ML application of `predict_buy_app` is built using [FastAPI](https://fastapi.tiangolo.com/) with a Dockerfile that creates the application Docker image.
+This `Build Docker App Image` workflow is triggered by the `on: pull_request types: closed on branches: feature* paths: models/*.pkl.dvc` event whenever the ML model `.pkl file` changes. An automatic merge PR (pull_request) action generated by a `github-actions[bot]` ([Generate Pull request](https://github.com/peter-evans/create-pull-request)) running at the end of the `Train ML Model` workflow invokes the trigger for the `Build Docker App Image` workflow to run. Alternatively this workflow may also be triggered by manually running in from the GitHub Actions menu tab.
+
+In this workflow, the ML application of `predict_buy_app` is built using [FastAPI](https://fastapi.tiangolo.com/) with a Dockerfile that creates the application Docker image.
 >
 > FastAPI is a modern, fast (high-performance), web framework for building APIs with Python based on standard Python type hints.
 >
@@ -96,11 +100,11 @@ After the Docker image is built, it is tagged with the next release version numb
   ![github-rel-tagging-screenshot2](https://github.com/user-attachments/assets/2e004865-7d54-411f-bdb3-eaf58af63933)
 Here's a screenshot of the registry repo `ce7-grp-1/nonprod/predict_buy_app` where all the `predict_buy_app` Docker images are pushed to: 
   ![ecr-nonprod-repo-screenshot](https://github.com/user-attachments/assets/87df773d-a8b2-4411-9855-3d8f640341a9)
-Note that after this `Build Docker App Image` workflow completes, a manual Pull Request has to be created for code review and upon approval merges the Feature branch into the Develop branch for automated SIT cycle to begin. 
+Note that after this `Build Docker App Image` workflow completes, a manual Pull Request has to be created for code review and upon approval merges the Feature branch into the Develop branch for automated testing cycle to begin. 
 
 And when there's a merge Pull Request on either the Feature or Develop branch, it will automatically run the CI checks on all the Python programs too - `flake8` linting, `black` formatting, `snyk code test` scanning.
 #### 5. Promote the Application Docker Image from nonprod to prod ECR private registeries
-After the latest `predict_buy_app` version has successfully completed the SIT cycle, a manual Pull Request has to be created for code review and upon approval, merges the Develop branch with the Main branch. This will automatically trigger the `Promote Tested App Image` workflow to run `on: pull_request` of `types: closed` for `branches: main` whenever any of `paths: models/*.pkl.dvc app.py requirements.txt dockerfile trigger_test.py` changes.
+After the latest `predict_buy_app` version has successfully completed the testing cycle, a manual Pull Request has to be created for code review and upon approval, merges the Develop branch with the Main branch. This will automatically trigger the `Promote Tested App Image` workflow to run on the event of `on: pull_request types: closed branches: main paths: models/*.pkl.dvc app.py requirements.txt dockerfile trigger_test.py` whenever the ML model `.pkl file` or the  FastAPI app codes change.
 
 Here's an illustration of the workflow summary screen:
   ![promote_app-workflow-summary-screenshot1](https://github.com/user-attachments/assets/ae6c75c7-654b-418f-bfca-74351e59f1ea)

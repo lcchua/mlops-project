@@ -39,17 +39,17 @@ With the currrent proliferation of AI, it is imperative that the field of MLOps 
 ### Solution Architecture Overview
 The solution architecture can be described as follows:
 
-![capstone-project-solution-architecture](https://github.com/user-attachments/assets/5778e1cf-19a0-4cde-a26a-df0613683a46)
+![capstone-project-solution-architecture](https://github.com/user-attachments/assets/e3912b6b-ca5f-4c00-8ad5-942d20a491e5)
 
 It comprises of 3 major domains:
-  -  Machine Learning Development: ML Model Training and Publishing to AWS Elastic Container Registry (ECR) with AWS S3 bucket for the ML model version control metatdata and training datasets storage
-  -  Cluster Infra Deployment: Terraform creation for AWS Elastic Kubernetes Service (EKS), Prometheus / Grafana monitoring tools, K8S / AWS CloudWatch / Loki logging stack
-  -  Prediction Application Deployment & Rollback: GitHub Actions CD workflow pipeline from ECR to EKS for deployment to prod environment
+  -  **Machine Learning Development**: ML Model Training and Publishing to AWS Elastic Container Registry (ECR) with AWS S3 bucket for the ML model version control metatdata and training datasets storage
+  -  **Kubernetes Cluster Infra Deployment**: Terraform creation for AWS Elastic Kubernetes Service (EKS), Prometheus / Grafana monitoring tools, K8S / AWS CloudWatch / Loki logging stack
+  -  **Prediction Application Deployment & Rollback**: GitHub Actions CD workflow pipeline from ECR to EKS for deployment to prod environment
 
 <br>
 
 ## Getting Started
-First clone the above-mentioned Git repositories and get started with the project in the following sections:
+Firstly, clone the Git repositories mentioned under The Project section above and get started with the project through the following sections:
 - [ML Model Training and Publishing](docs/getting_started_clc-A.md)
 - [AWS EKS/Kubernetes Cluster Infrastructure](docs/getting_started_ty.md)
 - [Prometheus & Grafana SRE Monitoring Tools](docs/getting_started_jj.md)
@@ -69,4 +69,4 @@ Credits to the 'hardcore' team:
 
 ## Additional Resources if any
 1. [Machine Learning Operations (MLOps) For Beginners](https://medium.com/@prasadmahamulkar/machine-learning-operations-mlops-for-beginners-a5686bfe02b2)
-2. 
+2. [GitHub repo for MLOps For Beginners](https://github.com/prsdm/mlops-project)
