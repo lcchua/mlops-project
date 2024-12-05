@@ -1,15 +1,15 @@
 ### Insurance Buying Prediction Application Deployment & Rollback
-_fill in the workflow pipeline steps to check, install, build and execute_<br>
-_remove this section as according_
+This section describes the Continuous Delivery approach we have taken to ensure that our API is already ready for release upon manual approval.  For the purposes of the document, CD will be the shorthand for Continuous Delivery.
+
+
 #### Dependencies
 As we are deploying our FastAPI app into an AWS Elastic Kubernetes Service(EKS) Cluster, we used Skaffold, a command line tool meant for continuous integration(CI) and continuous deployment/delivery with Docker and Kubernetes. Skaffold has both build and deploy capabilities which can be used together or each by itself.
 
 More on Skaffold at: [Skaffold Documentation](https://skaffold.dev/docs/workflows/ci-cd/)
 
-
 Build(CI) and deploy(CD) configurations are described within the skaffold.yaml file which is required for Skaffold to work correctly.
 
-Initially, we used the _skaffold run_ command to build, push artifacts into ECR image repository and deploy the repository image into our EKS cluster. This is the most direct 'Continuous Delivery' setup. However, due to our use of DVC for tracking machine learning code and integrating the .pbx model file into our API, the build image is incomplete as Skaffold is incompatible with DVC due to DVC not being a separate repo frp, a Git Repo. 
+Initially, we used the _skaffold run_ command to build, push artifacts into ECR image repository and deploy the repository image into our EKS cluster. This is the most direct Continuous Delivery setup. However, due to our use of DVC for tracking machine learning code and integrating the .pbx model file into our API, the build image is incomplete as Skaffold is unable to retrieve and build code from DVC due to DVC being a separate repo from a Git Repo. 
 
 Eventually, we used _skaffold deploy_ in our Continuous Delivery Github workflow, which only deploys image to our EKS Cluster and decoupled the Continuous Integration(CI) process which is described here [docs/getting_started_clc-A.md](https://github.com/lcchua/mlops-project/blob/main/docs/getting_started_clc-A.md) 
 
@@ -78,12 +78,12 @@ Final step of the deployment is to verify that the deployment is running by runn
 
 The .pbx model file is bundled with API code and ideally should be decoupled and maintained in an AWS S3 storage. By doing so, we can fully utilize Skaffold's complete pipeline tool for CI/CD purposes. Such an implementation would have the API to connect to the .pbx model file when required. Any updates in the model file would not require rebuild of the FASTIAPI image and vice versa.
 
-**Add an action to deploy on release**
-
-In addition to the manual workflow dispatch step, we could have used a release action to trigger the workflow
+**Continuous Deployment Approach**
 
 ![image](https://github.com/user-attachments/assets/03d94c2e-cb1b-4d57-b1f0-78d417b4c54b)
 
-It is also possible to further automate deployment to prod EKS namespace by adding a on push trigger to the main branch.
+It is also possible to further adopt a Continuous Deployment approach to automate the release process of deploying changes into production. Such an approach would require an on push trigger to the main branch which would work in tandem with our existing branch protection rule. Currently, the rule demands a pull request be raised. Additional workflow jobs should run tests on the pull request from _develop_ branch into _main_. Upon successful merge into main branch, the cd.yaml workflow would then deploy the code into the prod EKS namespace.
+
+Additionally, we could also add a release action to trigger the workflow when a release is created in the GitHub repo.
 
 
