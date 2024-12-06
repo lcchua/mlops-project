@@ -19,8 +19,8 @@ Quantum AI is a Singapore-based tech startup specializing in AI platform enginee
 ## The Project
 Project Name: **Machine-Learning (ML) DevOps with DevSecOps and SRE Monitoring**<br>
 - Our organization repository [CE7-Group1-Capstone](https://github.com/CE7-Group1-Capstone) consists of: 
-  - [CI & Docker Image Registry Pipeline for ML Model Training & Publishing](https://github.com/CE7-Group1-Capstone/mlops-project)
-  - [CI/CD Pipeline for AWS EKS/K8S Clusters Infrastructure & Monitoring Tools](https://github.com/CE7-Group1-Capstone/Capstone-Infrastructure)
+  - [CI & Docker Image Registry Pipeline for ML Model Training & Publishing](https://github.com/CE7-Group1-Capstone/capstone-mlops-project)
+  - [CI/CD Pipeline for AWS EKS/K8S Clusters Infrastructure & Monitoring Tools](https://github.com/CE7-Group1-Capstone/ce7-grp-1-infra)
   - CD Pipeline for Insurance Buying Prediction Application Deployment & Rollback is part of the above 2 repos
 
 ### Scope, Context and Motivation 
