@@ -165,3 +165,4 @@ backup_dir/
 backup_dir/*
 
 .vscode
+.vscode/*
