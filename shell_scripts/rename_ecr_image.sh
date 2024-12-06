@@ -1,3 +1,4 @@
+#!/bin/bash
 repo_env=$1
 current_tag=$2
 new_tag=$3
