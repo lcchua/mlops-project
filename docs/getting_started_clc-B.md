@@ -33,6 +33,10 @@ The CICD pipeline workflows spanning between the Develop and Main branches is il
   ![py-flake8-linting-screenshot](https://github.com/user-attachments/assets/9e9d7c47-5fd4-42a5-be3c-00fe36b96cd5)
   ![py-black-formatting-screenshot](https://github.com/user-attachments/assets/7029a197-654c-40e0-bc67-f16f1c72fbd3)
   ![py-snyk-scanning-screenshot](https://github.com/user-attachments/assets/35882bac-bae0-4fea-a292-2784a82fb9f7)
+#### Potential Improvements
+  - Implement closed-loop feedback for ML development using Mlflows, evidently.ai for the ML data drifts, model metrics and performance feedback
+  - Using AWS Eventbridge and Lambda Function to trigger `cd.yml` workflow to automatically deploy app to Dev environment.
+  - Add automated testing using Selenium on Develop branch after the `build_app.yml` workflow has run.
 #### Learning Journey
 Some of the "little secrets" uncovered uin implementing this part of the MLOps Project are:
   - `workflow_run` event trigger of GitHub Actions workflows
